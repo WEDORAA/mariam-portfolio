@@ -1,0 +1,120 @@
+rules_version = '2';
+
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+
+    /* =========================
+       ADMIN CHECK
+    ========================= */
+
+    function isAdmin() {
+
+      return
+
+        request.auth != null
+
+        &&
+
+        exists(
+          /databases/$(database)/documents/admins/$(request.auth.uid)
+        )
+
+        &&
+
+        get(
+          /databases/$(database)/documents/admins/$(request.auth.uid)
+        ).data.active == true;
+
+    }
+
+
+    /* =========================
+       ADMINS
+    ========================= */
+
+    match /admins/{userId} {
+
+      allow read:
+        if request.auth != null
+        && request.auth.uid == userId;
+
+      allow write:
+        if false;
+
+    }
+
+
+    /* =========================
+       PORTFOLIO ITEMS
+    ========================= */
+
+    match /portfolioItems/{itemId} {
+
+      /*
+        Public users:
+        published work only.
+
+        Admin:
+        everything.
+      */
+
+      allow read:
+        if isAdmin()
+        ||
+        resource.data.published == true;
+
+
+      allow create,
+            update,
+            delete:
+        if isAdmin();
+
+    }
+
+
+    /* =========================
+       PROFILE
+    ========================= */
+
+    match /siteSettings/profile {
+
+      allow read:
+        if true;
+
+
+      allow write:
+        if isAdmin();
+
+    }
+
+
+    /* =========================
+       CATEGORIES / SECTIONS
+    ========================= */
+
+    match /categories/{categoryId} {
+
+      allow read,
+            write:
+        if isAdmin();
+
+    }
+
+
+    /* =========================
+       CLIENTS / BRANDS
+    ========================= */
+
+    match /clients/{clientId} {
+
+      allow read,
+            write:
+        if isAdmin();
+
+    }
+
+  }
+
+}

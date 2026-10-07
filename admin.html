@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#2c2023"
+  >
+
+  <title>
+    Mariam Portfolio | Admin
+  </title>
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="admin.css"
+  >
+
+</head>
+
+
+<body>
+
+
+  <div class="wrap">
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside>
+
+      <a
+        class="brand"
+        href="index.html"
+      >
+        MM<span>.</span>
+      </a>
+
+
+      <p>
+        PORTFOLIO ADMIN
+      </p>
+
+
+      <nav>
+
+        <a href="#overview">
+          Overview
+        </a>
+
+        <a href="#upload">
+          Add New
+        </a>
+
+        <a href="#items">
+          Manage Work
+        </a>
+
+        <a href="#profile">
+          Profile Photo
+        </a>
+
+      </nav>
+
+
+      <div class="bottom">
+
+        <a href="index.html">
+          View Portfolio
+        </a>
+
+
+        <button id="logout">
+          Logout
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main>
+
+
+      <!-- =========================
+           HEADER
+      ========================== -->
+
+      <header>
+
+        <div>
+
+          <p>
+            Welcome back
+          </p>
+
+
+          <h1>
+
+            Portfolio
+
+            <em>
+              Dashboard
+            </em>
+
+          </h1>
+
+        </div>
+
+
+        <span id="adminEmail">
+          Admin
+        </span>
+
+      </header>
+
+
+
+      <!-- =========================
+           OVERVIEW
+      ========================== -->
+
+      <section id="overview">
+
+        <h2>
+          Overview
+        </h2>
+
+
+        <div class="stats">
+
+
+          <div>
+
+            <b id="total">
+              0
+            </b>
+
+            <span>
+              Total
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <b id="pub">
+              0
+            </b>
+
+            <span>
+              Published
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <b id="feat">
+              0
+            </b>
+
+            <span>
+              Featured
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <b id="vid">
+              0
+            </b>
+
+            <span>
+              Videos
+            </span>
+
+          </div>
+
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =========================
+           ADD NEW
+      ========================== -->
+
+      <section id="upload">
+
+
+        <h2>
+          Add New
+        </h2>
+
+
+        <div class="grid">
+
+
+          <!-- =====================
+               FORM
+          ====================== -->
+
+          <form id="form">
+
+
+            <!-- ===================
+                 UPLOAD
+            ==================== -->
+
+            <div class="uploads">
+
+
+              <button
+                type="button"
+                id="imageBtn"
+              >
+
+                <span>
+                  ＋
+                </span>
+
+
+                <strong>
+                  Upload Image
+                </strong>
+
+
+                <small>
+                  JPG / JPEG / PNG / WebP
+                </small>
+
+              </button>
+
+
+
+              <button
+                type="button"
+                id="videoBtn"
+              >
+
+                <span>
+                  ▶
+                </span>
+
+
+                <strong>
+                  Upload Video
+                </strong>
+
+
+                <small>
+                  MP4 / MOV / WebM / M4V
+                </small>
+
+              </button>
+
+
+            </div>
+
+
+
+            <!-- ===================
+                 PREVIEW
+            ==================== -->
+
+            <div
+              id="preview"
+              class="preview hidden"
+            ></div>
+
+
+
+            <!-- ===================
+                 HIDDEN DATA
+            ==================== -->
+
+            <input
+              type="hidden"
+              id="url"
+            >
+
+
+            <input
+              type="hidden"
+              id="publicId"
+            >
+
+
+            <input
+              type="hidden"
+              id="type"
+            >
+
+
+            <input
+              type="hidden"
+              id="deleteToken"
+            >
+
+
+            <input
+              type="hidden"
+              id="editingId"
+            >
+
+
+
+            <!-- ===================
+                 TITLE
+            ==================== -->
+
+            <label>
+
+              Title
+
+
+              <input
+                id="title"
+                type="text"
+                required
+                placeholder="Example: Ramadan Campaign"
+              >
+
+            </label>
+
+
+
+            <!-- ===================
+                 SECTION
+            ==================== -->
+
+            <label>
+
+              Work Type / Section
+
+
+              <div class="select-line">
+
+
+                <select
+                  id="category"
+                  required
+                >
+
+                  <option value="">
+                    Choose a section
+                  </option>
+
+                </select>
+
+
+                <button
+                  type="button"
+                  class="add-option"
+                  id="addCategoryBtn"
+                >
+                  + Add section
+                </button>
+
+
+              </div>
+
+
+              <small class="field-help">
+
+                مثال:
+                Reels,
+                Social Media,
+                PR,
+                Campaigns,
+                Events
+
+              </small>
+
+
+            </label>
+
+
+
+            <!-- ===================
+                 CLIENT
+            ==================== -->
+
+            <label>
+
+              Client / Brand
+
+
+              <div class="select-line">
+
+
+                <select
+                  id="client"
+                  required
+                >
+
+                  <option value="">
+                    Choose a client / brand
+                  </option>
+
+                </select>
+
+
+                <button
+                  type="button"
+                  class="add-option"
+                  id="addClientBtn"
+                >
+                  + Add client
+                </button>
+
+
+              </div>
+
+
+              <small class="field-help">
+
+                تحديد الشغل ده تابع لمين.
+
+              </small>
+
+
+            </label>
+
+
+
+            <!-- ===================
+                 DESCRIPTION
+            ==================== -->
+
+            <label>
+
+              Description
+
+
+              <textarea
+                id="description"
+                rows="4"
+                placeholder="Short description..."
+              ></textarea>
+
+
+            </label>
+
+
+
+            <!-- ===================
+                 OPTIONS
+            ==================== -->
+
+            <div class="checks">
+
+
+              <label>
+
+                <input
+                  id="featured"
+                  type="checkbox"
+                >
+
+                Featured Work
+
+              </label>
+
+
+
+              <label>
+
+                <input
+                  id="published"
+                  type="checkbox"
+                  checked
+                >
+
+                Publish Now
+
+              </label>
+
+
+            </div>
+
+
+
+            <!-- ===================
+                 ACTIONS
+            ==================== -->
+
+            <div class="actions">
+
+
+              <button
+                class="primary"
+                type="submit"
+                id="save"
+              >
+
+                Save & Publish
+
+              </button>
+
+
+              <button
+                class="secondary hidden"
+                type="button"
+                id="cancel"
+              >
+
+                Cancel Edit
+
+              </button>
+
+
+            </div>
+
+
+
+            <!-- ===================
+                 MESSAGE
+            ==================== -->
+
+            <p id="msg"></p>
+
+
+          </form>
+
+
+
+          <!-- =====================
+               TIPS
+          ====================== -->
+
+          <div class="tips">
+
+
+            <h3>
+              How it works
+            </h3>
+
+
+            <p>
+
+              Upload the photo or video,
+              then choose the exact section
+              and client/brand.
+
+            </p>
+
+
+            <p>
+
+              You can create new sections
+              and clients directly from
+              the dashboard.
+
+            </p>
+
+
+            <p>
+
+              Visitors can filter the public
+              portfolio by section and see
+              which client each work belongs to.
+
+            </p>
+
+
+          </div>
+
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- =========================
+           MANAGE WORK
+      ========================== -->
+
+      <section id="items">
+
+
+        <div class="headrow">
+
+
+          <div>
+
+            <h2>
+              Manage Work
+            </h2>
+
+          </div>
+
+
+          <button id="refresh">
+            Refresh
+          </button>
+
+
+        </div>
+
+
+        <div id="table">
+
+          Loading...
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- =========================
+           PROFILE
+      ========================== -->
+
+      <section id="profile">
+
+
+        <h2>
+          Profile Photo
+        </h2>
+
+
+        <div class="profilegrid">
+
+
+          <div id="currentProfile">
+
+            No profile photo yet.
+
+          </div>
+
+
+          <div class="panel">
+
+
+            <button
+              class="primary"
+              id="profileBtn"
+              type="button"
+            >
+
+              Choose Profile Photo
+
+            </button>
+
+
+            <p id="profileMsg"></p>
+
+
+          </div>
+
+
+        </div>
+
+
+      </section>
+
+
+    </main>
+
+
+  </div>
+
+
+
+  <!-- =========================
+       DELETE CONFIRM
+  ========================== -->
+
+  <div
+    id="confirm"
+    class="overlay"
+  >
+
+
+    <div>
+
+
+      <h2>
+        Remove this work?
+      </h2>
+
+
+      <p>
+        It will disappear from
+        the public portfolio.
+      </p>
+
+
+      <div class="actions">
+
+
+        <button
+          id="cancelDelete"
+          class="secondary"
+          type="button"
+        >
+          Cancel
+        </button>
+
+
+        <button
+          id="delete"
+          class="danger"
+          type="button"
+        >
+          Remove
+        </button>
+
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+
+  <script
+    type="module"
+    src="admin.js"
+  ></script>
+
+
+</body>
+
+</html>

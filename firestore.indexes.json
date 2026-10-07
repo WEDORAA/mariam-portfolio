@@ -1,0 +1,1 @@
+{"indexes":[{"collectionGroup":"portfolioItems","queryScope":"COLLECTION","fields":[{"fieldPath":"published","order":"ASCENDING"},{"fieldPath":"order","order":"ASCENDING"}]}],"fieldOverrides":[]}
