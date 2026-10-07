@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
@@ -7,12 +7,7 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <meta
-    name="theme-color"
-    content="#2c2023"
+    content="width=device-width, initial-scale=1"
   >
 
   <title>
@@ -20,24 +15,8 @@
   </title>
 
   <link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
-  >
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
     rel="stylesheet"
-  >
-
-  <link
-    rel="stylesheet"
-    href="admin.css"
+    href="admin.css?v=4"
   >
 
 </head>
@@ -45,14 +24,10 @@
 
 <body>
 
-
   <div class="wrap">
 
 
-    <!-- =========================
-         SIDEBAR
-    ========================== -->
-
+    <!-- SIDEBAR -->
     <aside>
 
       <a
@@ -75,7 +50,19 @@
         </a>
 
         <a href="#upload">
-          Add New
+          Add New Work
+        </a>
+
+        <a href="#experience">
+          Experience
+        </a>
+
+        <a href="#education">
+          Education
+        </a>
+
+        <a href="#skills">
+          Skills
         </a>
 
         <a href="#items">
@@ -84,6 +71,10 @@
 
         <a href="#profile">
           Profile Photo
+        </a>
+
+        <a href="#content">
+          Site Content
         </a>
 
       </nav>
@@ -96,7 +87,10 @@
         </a>
 
 
-        <button id="logout">
+        <button
+          id="logout"
+          type="button"
+        >
           Logout
         </button>
 
@@ -105,17 +99,11 @@
     </aside>
 
 
-    <!-- =========================
-         MAIN
-    ========================== -->
-
+    <!-- MAIN -->
     <main>
 
 
-      <!-- =========================
-           HEADER
-      ========================== -->
-
+      <!-- HEADER -->
       <header>
 
         <div>
@@ -126,31 +114,24 @@
 
 
           <h1>
-
             Portfolio
-
-            <em>
-              Dashboard
-            </em>
-
+            <em>Dashboard</em>
           </h1>
 
         </div>
 
 
-        <span id="adminEmail">
-          Admin
-        </span>
+        <span
+          id="adminEmail"
+        ></span>
 
       </header>
 
 
-
-      <!-- =========================
-           OVERVIEW
-      ========================== -->
-
-      <section id="overview">
+      <!-- OVERVIEW -->
+      <section
+        id="overview"
+      >
 
         <h2>
           Overview
@@ -160,20 +141,28 @@
         <div class="stats">
 
 
-          <div>
+          <button
+            type="button"
+            class="stat-card"
+            data-jump="#items"
+          >
 
             <b id="total">
               0
             </b>
 
             <span>
-              Total
+              Total Work
             </span>
 
-          </div>
+          </button>
 
 
-          <div>
+          <button
+            type="button"
+            class="stat-card"
+            data-jump="#items"
+          >
 
             <b id="pub">
               0
@@ -183,10 +172,14 @@
               Published
             </span>
 
-          </div>
+          </button>
 
 
-          <div>
+          <button
+            type="button"
+            class="stat-card"
+            data-jump="#items"
+          >
 
             <b id="feat">
               0
@@ -196,10 +189,14 @@
               Featured
             </span>
 
-          </div>
+          </button>
 
 
-          <div>
+          <button
+            type="button"
+            class="stat-card"
+            data-jump="#items"
+          >
 
             <b id="vid">
               0
@@ -209,7 +206,41 @@
               Videos
             </span>
 
-          </div>
+          </button>
+
+
+          <button
+            type="button"
+            class="stat-card"
+            data-jump="#experience"
+          >
+
+            <b id="expCount">
+              0
+            </b>
+
+            <span>
+              Experience
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="stat-card"
+            data-jump="#education"
+          >
+
+            <b id="eduCount">
+              0
+            </b>
+
+            <span>
+              Education
+            </span>
+
+          </button>
 
 
         </div>
@@ -217,32 +248,23 @@
       </section>
 
 
-
-      <!-- =========================
-           ADD NEW
-      ========================== -->
-
-      <section id="upload">
-
+      <!-- ADD NEW WORK -->
+      <section
+        id="upload"
+      >
 
         <h2>
-          Add New
+          Add New Work
         </h2>
 
 
         <div class="grid">
 
 
-          <!-- =====================
-               FORM
-          ====================== -->
+          <form
+            id="workForm"
+          >
 
-          <form id="form">
-
-
-            <!-- ===================
-                 UPLOAD
-            ==================== -->
 
             <div class="uploads">
 
@@ -252,15 +274,11 @@
                 id="imageBtn"
               >
 
-                <span>
-                  ＋
-                </span>
-
+                ＋
 
                 <strong>
                   Upload Image
                 </strong>
-
 
                 <small>
                   JPG / JPEG / PNG / WebP
@@ -269,21 +287,16 @@
               </button>
 
 
-
               <button
                 type="button"
                 id="videoBtn"
               >
 
-                <span>
-                  ▶
-                </span>
-
+                ▶
 
                 <strong>
                   Upload Video
                 </strong>
-
 
                 <small>
                   MP4 / MOV / WebM / M4V
@@ -295,21 +308,11 @@
             </div>
 
 
-
-            <!-- ===================
-                 PREVIEW
-            ==================== -->
-
             <div
               id="preview"
               class="preview hidden"
             ></div>
 
-
-
-            <!-- ===================
-                 HIDDEN DATA
-            ==================== -->
 
             <input
               type="hidden"
@@ -341,19 +344,12 @@
             >
 
 
-
-            <!-- ===================
-                 TITLE
-            ==================== -->
-
             <label>
 
               Title
 
-
               <input
                 id="title"
-                type="text"
                 required
                 placeholder="Example: Ramadan Campaign"
               >
@@ -361,114 +357,59 @@
             </label>
 
 
-
-            <!-- ===================
-                 SECTION
-            ==================== -->
-
             <label>
 
               Work Type / Section
 
-
               <div class="select-line">
-
 
                 <select
                   id="category"
                   required
-                >
-
-                  <option value="">
-                    Choose a section
-                  </option>
-
-                </select>
+                ></select>
 
 
                 <button
-                  type="button"
                   class="add-option"
                   id="addCategoryBtn"
+                  type="button"
                 >
                   + Add section
                 </button>
 
-
               </div>
-
-
-              <small class="field-help">
-
-                مثال:
-                Reels,
-                Social Media,
-                PR,
-                Campaigns,
-                Events
-
-              </small>
-
 
             </label>
 
-
-
-            <!-- ===================
-                 CLIENT
-            ==================== -->
 
             <label>
 
               Client / Brand
 
-
               <div class="select-line">
-
 
                 <select
                   id="client"
                   required
-                >
-
-                  <option value="">
-                    Choose a client / brand
-                  </option>
-
-                </select>
+                ></select>
 
 
                 <button
-                  type="button"
                   class="add-option"
                   id="addClientBtn"
+                  type="button"
                 >
                   + Add client
                 </button>
 
-
               </div>
-
-
-              <small class="field-help">
-
-                تحديد الشغل ده تابع لمين.
-
-              </small>
-
 
             </label>
 
 
-
-            <!-- ===================
-                 DESCRIPTION
-            ==================== -->
-
             <label>
 
               Description
-
 
               <textarea
                 id="description"
@@ -476,17 +417,10 @@
                 placeholder="Short description..."
               ></textarea>
 
-
             </label>
 
 
-
-            <!-- ===================
-                 OPTIONS
-            ==================== -->
-
             <div class="checks">
-
 
               <label>
 
@@ -498,7 +432,6 @@
                 Featured Work
 
               </label>
-
 
 
               <label>
@@ -513,47 +446,30 @@
 
               </label>
 
-
             </div>
 
 
-
-            <!-- ===================
-                 ACTIONS
-            ==================== -->
-
             <div class="actions">
-
 
               <button
                 class="primary"
-                type="submit"
                 id="save"
+                type="submit"
               >
-
                 Save & Publish
-
               </button>
 
 
               <button
                 class="secondary hidden"
-                type="button"
                 id="cancel"
+                type="button"
               >
-
                 Cancel Edit
-
               </button>
-
 
             </div>
 
-
-
-            <!-- ===================
-                 MESSAGE
-            ==================== -->
 
             <p id="msg"></p>
 
@@ -561,13 +477,7 @@
           </form>
 
 
-
-          <!-- =====================
-               TIPS
-          ====================== -->
-
           <div class="tips">
-
 
             <h3>
               How it works
@@ -575,29 +485,22 @@
 
 
             <p>
-
-              Upload the photo or video,
-              then choose the exact section
-              and client/brand.
-
+              Upload the media first.
             </p>
 
 
             <p>
-
-              You can create new sections
-              and clients directly from
-              the dashboard.
-
+              Choose the Client and Work Type.
             </p>
 
 
             <p>
+              Featured Work also appears in Featured.
+            </p>
 
-              Visitors can filter the public
-              portfolio by section and see
-              which client each work belongs to.
 
+            <p>
+              Publish Now controls public visibility.
             </p>
 
 
@@ -606,20 +509,416 @@
 
         </div>
 
+      </section>
+
+
+      <!-- EXPERIENCE -->
+      <section
+        id="experience"
+      >
+
+        <div class="headrow">
+
+          <div>
+
+            <h2>
+              Experience
+            </h2>
+
+            <p class="section-note">
+              Add, edit or remove work experience.
+            </p>
+
+          </div>
+
+
+          <button
+            id="addExperience"
+            class="primary small-btn"
+            type="button"
+          >
+            + Add Experience
+          </button>
+
+        </div>
+
+
+        <form
+          id="experienceForm"
+          class="management-form hidden"
+        >
+
+          <input
+            type="hidden"
+            id="experienceId"
+          >
+
+
+          <div class="two-col">
+
+            <label>
+              Company
+
+              <input
+                id="experienceCompany"
+                required
+              >
+
+            </label>
+
+
+            <label>
+              Position / Role
+
+              <input
+                id="experienceRole"
+                required
+              >
+
+            </label>
+
+
+            <label>
+              Start Date
+
+              <input
+                id="experienceStart"
+                placeholder="Aug 2024"
+                required
+              >
+
+            </label>
+
+
+            <label>
+              End Date
+
+              <input
+                id="experienceEnd"
+                placeholder="Present"
+              >
+
+            </label>
+
+          </div>
+
+
+          <label>
+
+            Description
+
+            <textarea
+              id="experienceDescription"
+              rows="4"
+              placeholder="Describe the role and responsibilities..."
+            ></textarea>
+
+          </label>
+
+
+          <label>
+
+            Tags
+
+            <input
+              id="experienceTags"
+              placeholder="Public Relations, Content Creation, Reels"
+            >
+
+            <small>
+              Separate tags with commas.
+            </small>
+
+          </label>
+
+
+          <div class="actions">
+
+            <button
+              class="primary"
+              id="saveExperience"
+              type="submit"
+            >
+              Save Experience
+            </button>
+
+
+            <button
+              class="secondary"
+              id="cancelExperience"
+              type="button"
+            >
+              Cancel
+            </button>
+
+          </div>
+
+
+          <p id="experienceMsg"></p>
+
+        </form>
+
+
+        <div
+          id="experienceList"
+          class="management-list"
+        ></div>
 
       </section>
 
 
-
-      <!-- =========================
-           MANAGE WORK
-      ========================== -->
-
-      <section id="items">
-
+      <!-- EDUCATION -->
+      <section
+        id="education"
+      >
 
         <div class="headrow">
 
+          <div>
+
+            <h2>
+              Education
+            </h2>
+
+            <p class="section-note">
+              Add, edit or remove education entries.
+            </p>
+
+          </div>
+
+
+          <button
+            id="addEducation"
+            class="primary small-btn"
+            type="button"
+          >
+            + Add Education
+          </button>
+
+        </div>
+
+
+        <form
+          id="educationForm"
+          class="management-form hidden"
+        >
+
+          <input
+            type="hidden"
+            id="educationId"
+          >
+
+
+          <div class="two-col">
+
+            <label>
+
+              Institution
+
+              <input
+                id="educationInstitution"
+                required
+              >
+
+            </label>
+
+
+            <label>
+
+              Degree / Program
+
+              <input
+                id="educationDegree"
+                required
+              >
+
+            </label>
+
+
+            <label>
+
+              Section / Specialty
+
+              <input
+                id="educationSection"
+              >
+
+            </label>
+
+
+            <label>
+
+              Date / Year
+
+              <input
+                id="educationDate"
+                placeholder="May 2024"
+              >
+
+            </label>
+
+          </div>
+
+
+          <label>
+
+            Description
+
+            <textarea
+              id="educationDescription"
+              rows="3"
+            ></textarea>
+
+          </label>
+
+
+          <div class="actions">
+
+            <button
+              class="primary"
+              id="saveEducation"
+              type="submit"
+            >
+              Save Education
+            </button>
+
+
+            <button
+              class="secondary"
+              id="cancelEducation"
+              type="button"
+            >
+              Cancel
+            </button>
+
+          </div>
+
+
+          <p id="educationMsg"></p>
+
+        </form>
+
+
+        <div
+          id="educationList"
+          class="management-list"
+        ></div>
+
+      </section>
+
+
+      <!-- SKILLS -->
+      <section
+        id="skills"
+      >
+
+        <div class="headrow">
+
+          <div>
+
+            <h2>
+              Skills
+            </h2>
+
+            <p class="section-note">
+              Add, edit or remove skills.
+            </p>
+
+          </div>
+
+
+          <button
+            id="addSkill"
+            class="primary small-btn"
+            type="button"
+          >
+            + Add Skill
+          </button>
+
+        </div>
+
+
+        <form
+          id="skillForm"
+          class="management-form hidden"
+        >
+
+          <input
+            type="hidden"
+            id="skillId"
+          >
+
+
+          <div class="two-col">
+
+            <label>
+
+              Skill Name
+
+              <input
+                id="skillName"
+                required
+                placeholder="Public Relations"
+              >
+
+            </label>
+
+
+            <label>
+
+              Level / Category
+
+              <input
+                id="skillLevel"
+                placeholder="Professional"
+              >
+
+            </label>
+
+          </div>
+
+
+          <div class="actions">
+
+            <button
+              class="primary"
+              id="saveSkill"
+              type="submit"
+            >
+              Save Skill
+            </button>
+
+
+            <button
+              class="secondary"
+              id="cancelSkill"
+              type="button"
+            >
+              Cancel
+            </button>
+
+          </div>
+
+
+          <p id="skillMsg"></p>
+
+        </form>
+
+
+        <div
+          id="skillList"
+          class="skill-admin-list"
+        ></div>
+
+      </section>
+
+
+      <!-- MANAGE WORK -->
+      <section
+        id="items"
+      >
+
+        <div class="headrow">
 
           <div>
 
@@ -627,34 +926,35 @@
               Manage Work
             </h2>
 
+            <p class="section-note">
+              Edit or remove portfolio work.
+            </p>
+
           </div>
 
 
-          <button id="refresh">
+          <button
+            id="refresh"
+            class="secondary"
+            type="button"
+          >
             Refresh
           </button>
-
 
         </div>
 
 
         <div id="table">
-
           Loading...
-
         </div>
-
 
       </section>
 
 
-
-      <!-- =========================
-           PROFILE
-      ========================== -->
-
-      <section id="profile">
-
+      <!-- PROFILE -->
+      <section
+        id="profile"
+      >
 
         <h2>
           Profile Photo
@@ -663,73 +963,247 @@
 
         <div class="profilegrid">
 
-
-          <div id="currentProfile">
-
-            No profile photo yet.
-
+          <div
+            id="currentProfile"
+            class="profile-current"
+          >
+            No profile photo uploaded yet.
           </div>
 
 
           <div class="panel">
 
-
             <button
-              class="primary"
               id="profileBtn"
+              class="primary"
               type="button"
             >
-
               Choose Profile Photo
-
             </button>
 
 
             <p id="profileMsg"></p>
 
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- SITE CONTENT -->
+      <section
+        id="content"
+      >
+
+        <div class="headrow">
+
+          <div>
+
+            <h2>
+              Site Content
+            </h2>
+
+            <p class="section-note">
+              Edit the public website text.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <form
+          id="contentForm"
+          class="management-form"
+        >
+
+
+          <div class="two-col">
+
+            <label>
+
+              Hero Eyebrow
+
+              <input
+                id="heroEyebrow"
+              >
+
+            </label>
+
+
+            <label>
+
+              Hero Title
+
+              <input
+                id="heroTitle"
+              >
+
+            </label>
 
           </div>
 
 
-        </div>
+          <label>
 
+            Hero Lead
+
+            <textarea
+              id="heroLead"
+              rows="3"
+            ></textarea>
+
+          </label>
+
+
+          <label>
+
+            About Heading
+
+            <input
+              id="aboutHeading"
+            >
+
+          </label>
+
+
+          <label>
+
+            About Intro
+
+            <textarea
+              id="aboutIntro"
+              rows="3"
+            ></textarea>
+
+          </label>
+
+
+          <label>
+
+            About Body
+
+            <textarea
+              id="aboutBody"
+              rows="3"
+            ></textarea>
+
+          </label>
+
+
+          <label>
+
+            About Quote
+
+            <textarea
+              id="aboutQuote"
+              rows="2"
+            ></textarea>
+
+          </label>
+
+
+          <label>
+
+            Contact Heading
+
+            <input
+              id="contactHeading"
+            >
+
+          </label>
+
+
+          <div class="two-col">
+
+            <label>
+
+              Contact Email
+
+              <input
+                id="contactEmail"
+                type="email"
+              >
+
+            </label>
+
+
+            <label>
+
+              Phone 1
+
+              <input
+                id="contactPhone1"
+              >
+
+            </label>
+
+
+            <label>
+
+              Phone 2
+
+              <input
+                id="contactPhone2"
+              >
+
+            </label>
+
+
+            <label>
+
+              Location
+
+              <input
+                id="contactLocation"
+              >
+
+            </label>
+
+          </div>
+
+
+          <button
+            class="primary"
+            id="saveContent"
+            type="submit"
+          >
+            Save Site Content
+          </button>
+
+
+          <p id="contentMsg"></p>
+
+        </form>
 
       </section>
 
 
     </main>
 
-
   </div>
 
 
-
-  <!-- =========================
-       DELETE CONFIRM
-  ========================== -->
-
+  <!-- DELETE MODAL -->
   <div
     id="confirm"
     class="overlay"
   >
 
-
     <div>
 
-
       <h2>
-        Remove this work?
+        Remove item?
       </h2>
 
 
-      <p>
-        It will disappear from
-        the public portfolio.
+      <p id="confirmText">
+        Are you sure?
       </p>
 
 
       <div class="actions">
-
 
         <button
           id="cancelDelete"
@@ -748,27 +1222,17 @@
           Remove
         </button>
 
-
       </div>
 
-
     </div>
-
 
   </div>
 
 
-
-  <!-- =========================
-       JAVASCRIPT
-  ========================== -->
-
   <script
     type="module"
-    src="admin.js"
+    src="admin.js?v=4"
   ></script>
 
-
 </body>
-
 </html>
