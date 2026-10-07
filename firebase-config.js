@@ -1,1 +1,24 @@
-export const firebaseConfig={apiKey:"AIzaSyDj1XyyRgOr9hrXN4LlZ5RhsKeSKX4RNac",authDomain:"mariam-mohamed-portfolio.firebaseapp.com",projectId:"mariam-mohamed-portfolio",storageBucket:"mariam-mohamed-portfolio.firebasestorage.app",messagingSenderId:"1036538547263",appId:"1:1036538547263:web:5cc3e27d471bca8b96bc8a",measurementId:"G-QB2C7CC67B"};
+export const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyDj1XyyRgOr9hrXN4LlZ5RhsKeSKX4RNac",
+
+  authDomain:
+    "mariam-mohamed-portfolio.firebaseapp.com",
+
+  projectId:
+    "mariam-mohamed-portfolio",
+
+  storageBucket:
+    "mariam-mohamed-portfolio.firebasestorage.app",
+
+  messagingSenderId:
+    "1036538547263",
+
+  appId:
+    "1:1036538547263:web:5cc3e27d471bca8b96bc8a",
+
+  measurementId:
+    "G-QB2C7CC67B"
+
+};
