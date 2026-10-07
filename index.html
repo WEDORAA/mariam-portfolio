@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
@@ -7,17 +7,12 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <meta
-    name="theme-color"
-    content="#f8f2ee"
+    content="width=device-width, initial-scale=1"
   >
 
   <meta
     name="description"
-    content="Mariam Mohamed — Public Relations & Content Creator Portfolio"
+    content="Mariam Mohamed | Public Relations & Content Creator"
   >
 
   <title>
@@ -36,14 +31,16 @@
     crossorigin
   >
 
+
   <link
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   >
 
+
   <link
     rel="stylesheet"
-    href="style.css"
+    href="style.css?v=5"
   >
 
 </head>
@@ -51,43 +48,21 @@
 
 <body>
 
-
-  <!-- =========================
-       BACKGROUND
-  ========================== -->
-
   <div class="grain"></div>
 
-  <div class="blob blob-1"></div>
 
-  <div class="blob blob-2"></div>
-
-
-  <!-- =========================
-       ADMIN LOGIN BUTTON
-  ========================== -->
+  <!-- ADMIN LOGIN -->
 
   <button
-    class="admin-entry"
     id="adminEntry"
-    aria-label="Admin Login"
-    title="Admin Login"
+    class="admin-entry"
+    type="button"
   >
-
-    <span class="admin-lock">
-      ⌕
-    </span>
-
-    <span class="admin-entry-label">
-      Admin Login
-    </span>
-
+    🔒 Admin Login
   </button>
 
 
-  <!-- =========================
-       HEADER
-  ========================== -->
+  <!-- HEADER -->
 
   <header class="site-header">
 
@@ -99,10 +74,7 @@
     </a>
 
 
-    <nav
-      class="nav-links"
-      id="navLinks"
-    >
+    <nav id="navLinks">
 
       <a href="#about">
         About
@@ -132,94 +104,66 @@
 
 
     <button
-      class="menu-toggle"
       id="menuToggle"
-      aria-label="Open menu"
-      aria-expanded="false"
+      class="menu-toggle"
+      type="button"
+      aria-label="Toggle menu"
     >
-
-      <span></span>
-      <span></span>
-
+      ☰
     </button>
 
   </header>
 
 
-  <!-- =========================
-       MAIN
-  ========================== -->
-
   <main>
 
 
-    <!-- =========================
-         HERO
-    ========================== -->
+    <!-- HERO -->
 
     <section
-      class="hero section"
+      class="hero"
       id="home"
     >
 
-      <div class="hero-copy reveal">
+      <div class="hero-copy">
 
-        <p class="eyebrow">
-
-          <span></span>
-
+        <p
+          id="heroEyebrow"
+          class="eyebrow"
+        >
           Public Relations & Content Creator
-
         </p>
 
 
-        <h1>
-
-          Mariam
-
-          <em>
-            Mohamed
-          </em>
-
+        <h1 id="heroTitle">
+          Mariam <em>Mohamed</em>
         </h1>
 
 
-        <p class="hero-description">
-
-          Building meaningful connections,
-          creating engaging content,
+        <p
+          id="heroLead"
+          class="lead"
+        >
+          Building meaningful connections, creating engaging content,
           and turning ideas into visual stories.
-
         </p>
 
 
-        <div class="hero-actions">
+        <div class="actions">
 
           <a
+            class="btn"
             href="#work"
-            class="btn btn-primary"
           >
-
-            Explore My Work
-
-            <span>
-              ↗
-            </span>
-
+            Explore My Work ↗
           </a>
 
 
           <a
+            class="text-btn"
             href="#contact"
-            class="btn btn-link"
           >
-
-            Let's Connect
-
-            <span>
-              →
-            </span>
-
+            Let's Connect →
           </a>
 
         </div>
@@ -227,18 +171,14 @@
       </div>
 
 
-      <div class="hero-visual reveal reveal-delay">
+      <div class="hero-image">
 
-        <div class="portrait-card">
+        <div
+          id="profileBox"
+          class="profile-box"
+        >
 
-          <div
-            class="portrait-placeholder"
-            id="profilePlaceholder"
-          >
-
-            <div
-              class="placeholder-ring"
-            ></div>
+          <div class="profile-placeholder">
 
             <span>
               Profile Photo
@@ -250,180 +190,61 @@
 
           </div>
 
-
-          <div class="portrait-caption">
-
-            <span>
-              01
-            </span>
-
-            <span>
-              Creative / Communication / Content
-            </span>
-
-          </div>
-
         </div>
-
-
-        <div class="floating-note">
-
-          <span class="dot"></span>
-
-          Available for creative collaborations
-
-        </div>
-
-      </div>
-
-
-      <div class="hero-scroll">
-
-        <span>
-          Scroll to explore
-        </span>
-
-        <i></i>
 
       </div>
 
     </section>
 
 
-    <!-- =========================
-         ABOUT
-    ========================== -->
+    <!-- ABOUT -->
 
     <section
-      class="section section-light"
+      class="section"
       id="about"
     >
 
-      <div class="section-heading reveal">
-
-        <p class="eyebrow">
-
-          <span></span>
-
-          About Me
-
-        </p>
+      <p class="eyebrow">
+        About Me
+      </p>
 
 
-        <h2>
-
-          Creative communication
-
-          <br>
-
-          <em>
-            with a human touch.
-          </em>
-
-        </h2>
-
-      </div>
+      <h2 id="aboutHeading">
+        Creative communication
+        <em>with a human touch.</em>
+      </h2>
 
 
-      <div class="about-grid">
+      <div class="two">
+
+        <div>
+
+          <p
+            id="aboutIntro"
+            class="big"
+          ></p>
 
 
-        <div class="about-copy reveal">
-
-          <p class="large-text">
-
-            I'm a media graduate with hands-on
-            experience in Public Relations and
-            Content Creation, alongside Customer
-            Relations and Front Office Operations.
-
-          </p>
-
-
-          <p>
-
-            My work combines client communication,
-            content planning, filming, short-form
-            video editing, social media support,
-            and team coordination.
-
-            I enjoy creating content that feels
-            professional, clear, and engaging.
-
-          </p>
-
-
-          <div class="about-facts">
-
-            <div>
-
-              <strong>
-                2024
-              </strong>
-
-              <span>
-                Media Graduate
-              </span>
-
-            </div>
-
-
-            <div>
-
-              <strong>
-                2025
-              </strong>
-
-              <span>
-                Marketing & Soft Skills Diploma
-              </span>
-
-            </div>
-
-
-            <div>
-
-              <strong>
-                PR
-              </strong>
-
-              <span>
-                Core Professional Focus
-              </span>
-
-            </div>
-
-          </div>
+          <p
+            id="aboutBody"
+            class="muted"
+          ></p>
 
         </div>
 
 
-        <div class="about-visual reveal reveal-delay">
+        <div class="quote">
 
-          <div class="quote-card">
+          “
 
-            <span class="quote-mark">
-              “
-            </span>
+          <br>
 
-
-            <p>
-
-              Creating content is not only
-              about what people see — it is
-              about how the story makes them feel.
-
-            </p>
+          <span id="aboutQuote"></span>
 
 
-            <span class="quote-line"></span>
-
-
-            <small>
-              Mariam Mohamed
-            </small>
-
-          </div>
+          <small>
+            — Mariam Mohamed
+          </small>
 
         </div>
 
@@ -432,379 +253,110 @@
     </section>
 
 
-    <!-- =========================
-         EXPERIENCE
-    ========================== -->
+    <!-- EXPERIENCE -->
 
     <section
-      class="section section-dark"
+      class="section dark"
       id="experience"
     >
 
-      <div class="section-heading light reveal">
+      <p class="eyebrow">
+        Experience
+      </p>
 
-        <p class="eyebrow">
 
-          <span></span>
+      <h2>
+        A journey built on
+        <em>people & creativity.</em>
+      </h2>
 
-          Experience
 
-        </p>
+      <div
+        id="experienceTimeline"
+        class="timeline"
+      >
 
-
-        <h2>
-
-          A journey built on
-
-          <br>
-
-          <em>
-            people & creativity.
-          </em>
-
-        </h2>
-
-      </div>
-
-
-      <div class="timeline">
-
-
-        <article class="timeline-item reveal">
-
-          <div class="timeline-date">
-            AUG 2024 — PRESENT
-          </div>
-
-
-          <div class="timeline-content">
-
-            <div class="company-row">
-
-              <h3>
-                ONE CLINICS
-              </h3>
-
-              <span>
-                Public Relations & Content Creator
-              </span>
-
-            </div>
-
-
-            <p>
-
-              Built and maintained professional
-              client relationships, handled inquiries
-              and follow-ups, and created social media
-              content for doctors, medical services,
-              treatment sessions, and clinic activities.
-
-            </p>
-
-
-            <div class="tag-row">
-
-              <span>
-                Public Relations
-              </span>
-
-              <span>
-                Content Creation
-              </span>
-
-              <span>
-                Reels
-              </span>
-
-              <span>
-                Social Media
-              </span>
-
-            </div>
-
-          </div>
-
-        </article>
-
-
-        <article class="timeline-item reveal">
-
-          <div class="timeline-date">
-            JUL 2023 — JUL 2024
-          </div>
-
-
-          <div class="timeline-content">
-
-            <div class="company-row">
-
-              <h3>
-                ONE CLINICS
-              </h3>
-
-              <span>
-                Receptionist
-              </span>
-
-            </div>
-
-
-            <p>
-
-              Welcomed clients and visitors,
-              managed appointments and incoming
-              calls, handled customer inquiries,
-              and coordinated with departments
-              to support smooth daily operations.
-
-            </p>
-
-
-            <div class="tag-row">
-
-              <span>
-                Customer Service
-              </span>
-
-              <span>
-                Appointments
-              </span>
-
-              <span>
-                Coordination
-              </span>
-
-            </div>
-
-          </div>
-
-        </article>
-
-
-        <article class="timeline-item reveal">
-
-          <div class="timeline-date">
-            DEC 2021 — JUN 2023
-          </div>
-
-
-          <div class="timeline-content">
-
-            <div class="company-row">
-
-              <h3>
-                ONE CLINICS
-              </h3>
-
-              <span>
-                Call Center Representative
-              </span>
-
-            </div>
-
-
-            <p>
-
-              Handled customer calls,
-              inquiries, appointment requests
-              and follow-ups, provided accurate
-              information, and supported positive
-              customer relationships.
-
-            </p>
-
-
-            <div class="tag-row">
-
-              <span>
-                Communication
-              </span>
-
-              <span>
-                Follow-up
-              </span>
-
-              <span>
-                Complaint Handling
-              </span>
-
-            </div>
-
-          </div>
-
-        </article>
-
-
-        <article class="timeline-item reveal">
-
-          <div class="timeline-date">
-            JUN 2021 — NOV 2021
-          </div>
-
-
-          <div class="timeline-content">
-
-            <div class="company-row">
-
-              <h3>
-                ORANGE EGYPT
-              </h3>
-
-              <span>
-                Telesales Representative
-              </span>
-
-            </div>
-
-
-            <p>
-
-              Contacted customers, presented products
-              and services, identified needs, handled
-              objections, and worked toward sales targets
-              and customer acquisition.
-
-            </p>
-
-
-            <div class="tag-row">
-
-              <span>
-                Sales
-              </span>
-
-              <span>
-                Customer Needs
-              </span>
-
-              <span>
-                Communication
-              </span>
-
-            </div>
-
-          </div>
-
-        </article>
-
+        <div class="empty dark-empty">
+          Loading experience...
+        </div>
 
       </div>
 
     </section>
 
 
-    <!-- =========================
-         WORK
-    ========================== -->
+    <!-- WORK -->
 
     <section
-      class="section section-light"
+      class="section"
       id="work"
     >
 
-      <div class="section-heading reveal">
-
-        <p class="eyebrow">
-
-          <span></span>
-
-          Selected Work
-
-        </p>
+      <p class="eyebrow">
+        Selected Work
+      </p>
 
 
-        <h2>
+      <h2>
+        Stories, visuals &
+        <em>short-form content.</em>
+      </h2>
 
-          Stories, visuals &
 
-          <br>
-
-          <em>
-            short-form content.
-          </em>
-
-        </h2>
-
+      <div class="filter-label">
+        Filter by client
       </div>
 
-
-      <div class="work-intro reveal">
-
-        <p>
-
-          A living gallery for photos,
-          Reels, behind-the-scenes moments,
-          social media creatives, campaigns,
-          and visual stories.
-
-        </p>
-
-
-        <span>
-
-          New published work appears here automatically.
-
-        </span>
-
-      </div>
-
-
-      <!-- CATEGORY FILTER -->
 
       <div
-        class="category-bar"
-        id="categoryBar"
-      >
+        id="clientFilters"
+        class="chips"
+      ></div>
 
-        <button
-          class="category-btn active"
-          data-category="all"
-        >
-          All
-        </button>
 
+      <div class="filter-label">
+        Filter by section
       </div>
+
+
+      <div
+        id="categoryFilters"
+        class="chips"
+      ></div>
 
 
       <!-- FEATURED -->
 
       <div
+        id="featured"
         class="featured-section hidden"
-        id="featuredSection"
       >
 
-        <div class="mini-heading">
-
-          <span>
-            Featured
-          </span>
-
-          <i></i>
-
-        </div>
+        <h4>
+          Featured Work
+        </h4>
 
 
         <div
-          class="featured-grid"
           id="featuredGrid"
+          class="media-grid compact-grid"
         ></div>
 
       </div>
 
 
-      <!-- GALLERY -->
+      <!-- GROUPED WORK -->
 
-      <div
-        class="media-grid"
-        id="mediaGrid"
-      >
+      <div id="workGroups">
 
-        <div class="empty-state">
+        <div
+          id="mediaGrid"
+          class="media-grid compact-grid"
+        >
 
-          <span class="loading-dot"></span>
-
-          Loading selected work...
+          <div class="empty">
+            Loading work...
+          </div>
 
         </div>
 
@@ -813,430 +365,173 @@
     </section>
 
 
-    <!-- =========================
-         SKILLS
-    ========================== -->
+    <!-- SKILLS -->
 
     <section
-      class="section section-dark"
+      class="section dark"
       id="skills"
     >
 
-      <div class="section-heading light reveal">
-
-        <p class="eyebrow">
-
-          <span></span>
-
-          Skills
-
-        </p>
+      <p class="eyebrow">
+        Skills
+      </p>
 
 
-        <h2>
-
-          What I bring
-
-          <br>
-
-          <em>
-            to the table.
-          </em>
-
-        </h2>
-
-      </div>
+      <h2>
+        What I bring
+        <em>to the table.</em>
+      </h2>
 
 
-      <div class="skills-layout">
+      <div
+        id="skillsList"
+        class="skills"
+      >
 
-
-        <div class="skill-feature reveal">
-
-          <span class="skill-number">
-            01
-          </span>
-
-
-          <h3>
-            Communication
-          </h3>
-
-
-          <p>
-
-            Strong client communication,
-            customer relations, follow-up,
-            organization, teamwork,
-            and coordination.
-
-          </p>
-
-        </div>
-
-
-        <div class="skills-list reveal reveal-delay">
-
-          <div class="skill-pill">
-            Public Relations
-          </div>
-
-          <div class="skill-pill">
-            Content Creation
-          </div>
-
-          <div class="skill-pill">
-            Social Media Content
-          </div>
-
-          <div class="skill-pill">
-            Client Communication
-          </div>
-
-          <div class="skill-pill">
-            Client Relations
-          </div>
-
-          <div class="skill-pill">
-            Customer Relations
-          </div>
-
-          <div class="skill-pill">
-            Customer Service
-          </div>
-
-          <div class="skill-pill">
-            Reels Filming
-          </div>
-
-          <div class="skill-pill">
-            Short-Form Video Editing
-          </div>
-
-          <div class="skill-pill">
-            Visual Content Creation
-          </div>
-
-          <div class="skill-pill">
-            Customer Follow-up
-          </div>
-
-          <div class="skill-pill">
-            Appointment Management
-          </div>
-
-          <div class="skill-pill">
-            Complaint Handling
-          </div>
-
-          <div class="skill-pill">
-            Team Coordination
-          </div>
-
-          <div class="skill-pill">
-            Marketing Fundamentals
-          </div>
-
-          <div class="skill-pill">
-            Communication Skills
-          </div>
-
-          <div class="skill-pill">
-            Teamwork & Collaboration
-          </div>
-
-          <div class="skill-pill">
-            Problem Solving
-          </div>
-
-          <div class="skill-pill">
-            Organization & Coordination
-          </div>
-
-        </div>
+        <span class="skill-pill">
+          Loading skills...
+        </span>
 
       </div>
 
     </section>
 
 
-    <!-- =========================
-         EDUCATION
-    ========================== -->
+    <!-- EDUCATION -->
 
     <section
-      class="section section-light"
+      class="section"
       id="education"
     >
 
-      <div class="section-heading reveal">
+      <p class="eyebrow">
+        Education
+      </p>
 
-        <p class="eyebrow">
 
-          <span></span>
+      <h2>
+        Learning that supports
+        <em>creative work.</em>
+      </h2>
 
-          Education
 
-        </p>
+      <div
+        id="educationCards"
+        class="cards"
+      >
 
-
-        <h2>
-
-          Learning that supports
-
-          <br>
-
-          <em>
-            creative work.
-          </em>
-
-        </h2>
-
-      </div>
-
-
-      <div class="education-grid">
-
-
-        <article class="education-card reveal">
-
-          <span class="card-index">
-            01
-          </span>
-
-
-          <p>
-            FACULTY OF ARTS — MEDIA DEPARTMENT
-          </p>
-
-
-          <h3>
-            Helwan University
-          </h3>
-
-
-          <h4>
-            Radio & Television Broadcasting Section
-          </h4>
-
-
-          <span class="card-year">
-            May 2024
-          </span>
-
-        </article>
-
-
-        <article class="education-card reveal reveal-delay">
-
-          <span class="card-index">
-            02
-          </span>
-
-
-          <p>
-            MARKETING & SOFT SKILLS
-          </p>
-
-
-          <h3>
-            Diploma
-          </h3>
-
-
-          <h4>
-            Adham Hossam
-          </h4>
-
-
-          <span class="card-year">
-            2025
-          </span>
-
-        </article>
-
-
-        <article class="language-card reveal">
-
-          <span class="card-index">
-            03
-          </span>
-
-
-          <p>
-            LANGUAGES
-          </p>
-
-
-          <div class="language-row">
-
-            <strong>
-              Arabic
-            </strong>
-
-            <span>
-              Native
-            </span>
-
-          </div>
-
-
-          <div class="language-row">
-
-            <strong>
-              English
-            </strong>
-
-            <span>
-              Upper-Intermediate
-            </span>
-
-          </div>
-
-        </article>
-
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         CONTACT
-    ========================== -->
-
-    <section
-      class="contact section"
-      id="contact"
-    >
-
-      <div class="contact-inner reveal">
-
-        <p class="eyebrow">
-
-          <span></span>
-
-          Let's Connect
-
-        </p>
-
-
-        <h2>
-
-          Have an idea?
-
-          <br>
-
-          <em>
-            Let's create something memorable.
-          </em>
-
-        </h2>
-
-
-        <p class="contact-copy">
-
-          For PR opportunities, content creation,
-          collaborations, or professional inquiries,
-          get in touch.
-
-        </p>
-
-
-        <a
-          class="contact-email"
-          href="mailto:Mariam.badawy07@gmail.com"
-        >
-
-          Mariam.badawy07@gmail.com
-
-          <span>
-            ↗
-          </span>
-
-        </a>
-
-
-        <div class="contact-details">
-
-          <a href="tel:+201102048078">
-            +20 110 204 8078
-          </a>
-
-          <a href="tel:+201067623833">
-            +20 106 762 3833
-          </a>
-
-          <span>
-            El Shorouk City, Cairo, Egypt
-          </span>
-
+        <div class="empty">
+          Loading education...
         </div>
 
       </div>
 
     </section>
 
-  </main>
+
+    <!-- CONTACT -->
+
+    <section
+      class="contact dark"
+      id="contact"
+    >
+
+      <p class="eyebrow">
+        Let's Connect
+      </p>
 
 
-  <!-- =========================
-       ADMIN LOGIN MODAL
-  ========================== -->
+      <h2 id="contactHeading">
+        Have an idea?
+        <br>
+        <em>Let's create something memorable.</em>
+      </h2>
+
+
+      <a
+        id="contactEmail"
+        class="email"
+        href="mailto:Mariam.badawy07@gmail.com"
+      >
+        Mariam.badawy07@gmail.com ↗
+      </a>
+
+
+      <!-- CLICKABLE PHONE NUMBERS -->
+
+     <div
+  id="contactDetails"
+  class="contact-details"
+>
+
+  <a
+    id="contactPhone1"
+    href="https://wa.me/201102048078"
+    target="_blank"
+    rel="noopener"
+  >
+    +20 110 204 8078
+  </a>
+
+  <span>•</span>
+
+  <a
+    id="contactPhone2"
+    href="https://wa.me/201067623833"
+    target="_blank"
+    rel="noopener"
+  >
+    +20 106 762 3833
+  </a>
+
+  <span>•</span>
+
+  <span id="contactLocation">
+    El Shorouk City, Cairo, Egypt
+  </span>
+
+</div>
+
+
+  <!-- ADMIN LOGIN MODAL -->
 
   <div
-    class="auth-modal"
     id="authModal"
-    aria-hidden="true"
+    class="overlay"
   >
 
     <div class="auth-card">
 
-
       <button
-        class="auth-close"
         id="authClose"
+        type="button"
         aria-label="Close"
       >
         ×
       </button>
 
 
-      <p class="auth-eyebrow">
+      <p class="eyebrow">
         Private Area
       </p>
 
 
       <h2>
-
-        Admin
-        <em>
-          Login
-        </em>
-
+        Admin <em>Login</em>
       </h2>
-
-
-      <p class="auth-subtitle">
-
-        This area is only for portfolio management.
-
-      </p>
 
 
       <form id="loginForm">
 
-
         <label>
 
-          Username
+          Email
 
           <input
             id="loginEmail"
             type="email"
-            required
             autocomplete="username"
-            placeholder="Admin email"
+            required
           >
 
         </label>
@@ -1249,35 +544,22 @@
           <input
             id="loginPassword"
             type="password"
-            required
             autocomplete="current-password"
-            placeholder="••••••••"
+            required
           >
 
         </label>
 
 
         <button
-          class="auth-submit"
+          class="btn"
           type="submit"
         >
-
-          <span>
-            Login
-          </span>
-
-          <span>
-            ↗
-          </span>
-
+          Login ↗
         </button>
 
 
-        <p
-          class="auth-message"
-          id="loginMessage"
-        ></p>
-
+        <p id="loginMessage"></p>
 
       </form>
 
@@ -1286,67 +568,52 @@
   </div>
 
 
-  <!-- =========================
-       MEDIA MODAL
-  ========================== -->
+  <!-- MEDIA MODAL -->
 
   <div
-    class="modal"
     id="mediaModal"
-    aria-hidden="true"
+    class="overlay media-overlay"
   >
 
     <button
-      class="modal-close"
-      id="modalClose"
-      aria-label="Close media"
+      id="mediaClose"
+      type="button"
+      aria-label="Close"
     >
       ×
     </button>
 
 
-    <div
-      class="modal-content"
-      id="modalContent"
-    ></div>
+    <div class="modal-wrap">
+
+      <div
+        id="mediaContent"
+        class="modal-content"
+      ></div>
 
 
-    <div
-      class="modal-caption"
-      id="modalCaption"
-    ></div>
+      <p
+        id="mediaCaption"
+        class="modal-caption"
+      ></p>
+
+    </div>
 
   </div>
 
 
-  <!-- =========================
-       FOOTER
-  ========================== -->
+  <footer>
 
-  <footer class="site-footer">
-
-    <p>
-
-      ©
-
-      <span id="year"></span>
-
-      Mariam Mohamed.
-      All rights reserved.
-
-    </p>
-
-
-    <a href="#home">
-      Back to top ↑
-    </a>
+    ©
+    <span id="year"></span>
+    Mariam Mohamed
 
   </footer>
 
 
   <script
     type="module"
-    src="script.js"
+    src="script.js?v=5"
   ></script>
 
 </body>
