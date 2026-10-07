@@ -1,6 +1,4 @@
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
 import {
   getAuth,
@@ -11,8 +9,6 @@ import {
 import {
   getFirestore,
   collection,
-  query,
-  orderBy,
   getDocs,
   getDoc,
   doc,
@@ -26,78 +22,313 @@ import { firebaseConfig } from "./firebase-config.js";
 import { cloudinaryConfig } from "./cloudinary-config.js";
 
 
-/* =========================================
+/* =========================================================
    FIREBASE
-========================================= */
+========================================================= */
 
-const app = initializeApp(firebaseConfig);
+const app =
+  initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const auth =
+  getAuth(app);
 
-const db = getFirestore(app);
+const db =
+  getFirestore(app);
 
-const $ = (id) =>
-  document.getElementById(id);
+const $ =
+  (id) =>
+    document.getElementById(id);
 
 
-/* =========================================
-   DEFAULT SECTIONS
-========================================= */
+/* =========================================================
+   DEFAULT DATA
+========================================================= */
 
 const DEFAULT_CATEGORIES = [
 
   "Reels",
-
   "Social Media",
-
   "PR",
-
   "Campaigns",
-
   "Events",
-
   "Behind The Scenes",
-
   "Other"
 
 ];
 
-
-/* =========================================
-   DEFAULT CLIENTS
-========================================= */
 
 const DEFAULT_CLIENTS = [
 
   "One Clinics",
-
   "Orange Egypt",
-
   "Personal",
-
   "Other"
 
 ];
 
 
-let currentUser = null;
+const DEFAULT_EXPERIENCES = [
+
+  {
+    company:
+      "One Clinics",
+
+    role:
+      "Public Relations & Content Creator",
+
+    startDate:
+      "Aug 2024",
+
+    endDate:
+      "Present",
+
+    description:
+      "Built and maintained professional client relationships, handled inquiries and follow-ups, and created social media content for doctors, medical services, treatment sessions and clinic activities.",
+
+    tags: [
+      "Public Relations",
+      "Content Creation",
+      "Reels",
+      "Social Media"
+    ]
+
+  },
+
+  {
+    company:
+      "One Clinics",
+
+    role:
+      "Receptionist",
+
+    startDate:
+      "Jul 2023",
+
+    endDate:
+      "Jul 2024",
+
+    description:
+      "Welcomed clients and visitors, managed appointments and incoming calls, handled customer inquiries, and coordinated with departments.",
+
+    tags: [
+      "Customer Service",
+      "Appointments",
+      "Coordination"
+    ]
+
+  },
+
+  {
+    company:
+      "One Clinics",
+
+    role:
+      "Call Center Representative",
+
+    startDate:
+      "Dec 2021",
+
+    endDate:
+      "Jun 2023",
+
+    description:
+      "Handled customer calls, inquiries, appointment requests and follow-ups, provided accurate information, and supported positive customer relationships.",
+
+    tags: [
+      "Communication",
+      "Follow-up",
+      "Complaint Handling"
+    ]
+
+  },
+
+  {
+    company:
+      "Orange Egypt",
+
+    role:
+      "Telesales Representative",
+
+    startDate:
+      "Jun 2021",
+
+    endDate:
+      "Nov 2021",
+
+    description:
+      "Contacted customers, presented products and services, identified needs, handled objections, and worked toward sales targets and customer acquisition.",
+
+    tags: [
+      "Sales",
+      "Customer Needs",
+      "Communication"
+    ]
+
+  }
+
+];
+
+
+const DEFAULT_EDUCATION = [
+
+  {
+    institution:
+      "Helwan University",
+
+    degree:
+      "Radio & Television Broadcasting Section",
+
+    section:
+      "FACULTY OF ARTS — MEDIA DEPARTMENT",
+
+    date:
+      "May 2024",
+
+    description:
+      "Media Department / Radio & Television Broadcasting Section"
+
+  },
+
+  {
+    institution:
+      "Adham Hossam",
+
+    degree:
+      "Marketing & Soft Skills Diploma",
+
+    section:
+      "MARKETING & SOFT SKILLS",
+
+    date:
+      "2025",
+
+    description:
+      "Professional development in marketing and soft skills"
+
+  },
+
+  {
+    institution:
+      "Languages",
+
+    degree:
+      "Arabic — Native / English — Upper-Intermediate",
+
+    section:
+      "LANGUAGES",
+
+    date:
+      "",
+
+    description:
+      ""
+
+  }
+
+];
+
+
+const DEFAULT_SKILLS = [
+
+  "Public Relations",
+  "Content Creation",
+  "Social Media Content",
+  "Client Communication",
+  "Client Relations",
+  "Customer Relations",
+  "Customer Service",
+  "Reels Filming",
+  "Short-Form Video Editing",
+  "Visual Content Creation",
+  "Customer Follow-up",
+  "Appointment Management",
+  "Complaint Handling",
+  "Team Coordination",
+  "Marketing Fundamentals",
+  "Communication Skills",
+  "Teamwork & Collaboration",
+  "Problem Solving",
+  "Organization & Coordination"
+
+].map(
+  (name) => ({
+
+    name,
+
+    level:
+      ""
+
+  })
+);
+
+
+const DEFAULT_CONTENT = {
+
+  heroEyebrow:
+    "Public Relations & Content Creator",
+
+  heroTitle:
+    "Mariam Mohamed",
+
+  heroLead:
+    "Building meaningful connections, creating engaging content, and turning ideas into visual stories.",
+
+  aboutHeading:
+    "Creative communication with a human touch.",
+
+  aboutIntro:
+    "I'm a media graduate with hands-on experience in Public Relations and Content Creation, alongside Customer Relations and Front Office Operations.",
+
+  aboutBody:
+    "My work combines client communication, content planning, filming, short-form video editing, social media support, and team coordination.",
+
+  aboutQuote:
+    "Creating content is not only about what people see — it is about how the story makes them feel.",
+
+  contactHeading:
+    "Have an idea? Let's create something memorable.",
+
+  contactEmail:
+    "Mariam.badawy07@gmail.com",
+
+  contactPhone1:
+    "+20 110 204 8078",
+
+  contactPhone2:
+    "+20 106 762 3833",
+
+  contactLocation:
+    "El Shorouk City, Cairo, Egypt"
+
+};
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let user = null;
 
 let items = [];
 
-let deleteId = null;
+let experiences = [];
+
+let education = [];
+
+let skills = [];
+
+let deleteTarget = null;
 
 
-/* =========================================
-   ADMIN AUTH
-========================================= */
+/* =========================================================
+   AUTH GUARD
+========================================================= */
 
 onAuthStateChanged(
-
   auth,
+  async (currentUser) => {
 
-  async (user) => {
-
-    if (!user) {
+    if (!currentUser) {
 
       location.href =
         "index.html";
@@ -109,24 +340,21 @@ onAuthStateChanged(
 
     try {
 
-      const adminDoc =
+      const adminSnap =
         await getDoc(
 
           doc(
             db,
             "admins",
-            user.uid
+            currentUser.uid
           )
 
         );
 
 
       if (
-
-        !adminDoc.exists() ||
-
-        adminDoc.data()?.active !== true
-
+        !adminSnap.exists() ||
+        adminSnap.data()?.active !== true
       ) {
 
         await signOut(auth);
@@ -139,219 +367,565 @@ onAuthStateChanged(
       }
 
 
-      currentUser =
-        user;
+      user =
+        currentUser;
 
 
-      if ($("adminEmail")) {
-
-        $("adminEmail").textContent =
-          user.email || "Admin";
-
-      }
+      $("adminEmail").textContent =
+        currentUser.email ||
+        "Admin";
 
 
-      await Promise.all([
+      /*
+        Seed first.
+        Then load.
+        This avoids a race condition.
+      */
 
-        loadTaxonomy(),
+      await seedDefaultsIfEmpty();
 
-        loadItems(),
+      await loadTaxonomy();
 
-        loadProfile()
+      await loadEverything();
 
-      ]);
+      await loadProfile();
 
-    }
+      await loadContent();
 
-    catch (error) {
+
+    } catch (error) {
 
       console.error(
-        "ADMIN AUTH ERROR:",
+        "ADMIN INIT ERROR:",
         error
       );
 
 
-      await signOut(auth);
-
-      location.href =
-        "index.html";
+      alert(
+        error.message ||
+        "Could not load dashboard."
+      );
 
     }
 
   }
-
 );
 
 
-/* =========================================
+/* =========================================================
    LOGOUT
-========================================= */
+========================================================= */
 
-if ($("logout")) {
+$("logout").addEventListener(
+  "click",
+  async () => {
 
-  $("logout").addEventListener(
+    await signOut(auth);
 
-    "click",
+    location.href =
+      "index.html";
 
-    async () => {
+  }
+);
 
-      await signOut(auth);
 
-      location.href =
-        "index.html";
+/* =========================================================
+   SEED DEFAULT DATA
+========================================================= */
+
+async function seedDefaultsIfEmpty() {
+
+  await seedCollection(
+    "experiences",
+    DEFAULT_EXPERIENCES
+  );
+
+
+  await seedCollection(
+    "education",
+    DEFAULT_EDUCATION
+  );
+
+
+  await seedCollection(
+    "skills",
+    DEFAULT_SKILLS
+  );
+
+
+  const contentSnap =
+    await getDoc(
+
+      doc(
+        db,
+        "siteSettings",
+        "content"
+      )
+
+    );
+
+
+  if (!contentSnap.exists()) {
+
+    await setDoc(
+
+      doc(
+        db,
+        "siteSettings",
+        "content"
+      ),
+
+      {
+
+        ...DEFAULT_CONTENT,
+
+        createdAt:
+          Date.now(),
+
+        updatedBy:
+          user.uid
+
+      }
+
+    );
+
+  }
+
+}
+
+
+async function seedCollection(
+  collectionName,
+  data
+) {
+
+  const snap =
+    await getDocs(
+      collection(
+        db,
+        collectionName
+      )
+    );
+
+
+  if (!snap.empty)
+    return;
+
+
+  for (
+    let i = 0;
+    i < data.length;
+    i++
+  ) {
+
+    await addDoc(
+
+      collection(
+        db,
+        collectionName
+      ),
+
+      {
+
+        ...data[i],
+
+        order:
+          i + 1,
+
+        createdAt:
+          Date.now(),
+
+        createdBy:
+          user.uid
+
+      }
+
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD EVERYTHING
+========================================================= */
+
+async function loadEverything() {
+
+  await Promise.all([
+
+    loadItems(),
+
+    loadExperience(),
+
+    loadEducation(),
+
+    loadSkills()
+
+  ]);
+
+
+  updateStats();
+
+}
+
+
+function updateStats() {
+
+  $("total").textContent =
+    items.length;
+
+
+  $("pub").textContent =
+    items.filter(
+      (item) =>
+        item.published === true
+    ).length;
+
+
+  $("feat").textContent =
+    items.filter(
+      (item) =>
+        item.featured === true
+    ).length;
+
+
+  $("vid").textContent =
+    items.filter(
+      (item) =>
+        item.type === "video"
+    ).length;
+
+
+  $("expCount").textContent =
+    experiences.length;
+
+
+  $("eduCount").textContent =
+    education.length;
+
+}
+
+
+/* =========================================================
+   WORK
+========================================================= */
+
+async function loadItems() {
+
+  const snap =
+    await getDocs(
+
+      collection(
+        db,
+        "portfolioItems"
+      )
+
+    );
+
+
+  items = snap.docs
+
+    .map(
+      (d) => ({
+
+        id:
+          d.id,
+
+        ...d.data()
+
+      })
+    )
+
+    .sort(
+
+      (a, b) =>
+
+        (Number(a.order) || 0) -
+        (Number(b.order) || 0)
+
+    );
+
+
+  renderItems();
+
+}
+
+
+function renderItems() {
+
+  const table =
+    $("table");
+
+
+  table.innerHTML =
+    "";
+
+
+  if (!items.length) {
+
+    table.innerHTML = `
+
+      <div class="row">
+
+        <div>
+          No work yet.
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  items.forEach(
+    (item) => {
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "row";
+
+
+      const media =
+
+        item.type === "video"
+
+          ? document.createElement(
+              "video"
+            )
+
+          : document.createElement(
+              "img"
+            );
+
+
+      media.src =
+        item.url;
+
+
+      media.alt =
+        item.title ||
+        "Portfolio work";
+
+
+      media.muted =
+        true;
+
+
+      media.playsInline =
+        true;
+
+
+      media.preload =
+        "metadata";
+
+
+      const info =
+        document.createElement(
+          "div"
+        );
+
+
+      info.innerHTML = `
+
+        <strong>
+
+          ${escapeHTML(
+            item.title ||
+            "Untitled"
+          )}
+
+        </strong>
+
+
+        <small>
+
+          ${escapeHTML(
+
+            [
+              item.client,
+              item.category
+
+            ]
+
+              .filter(Boolean)
+
+              .join(" • ")
+
+          )}
+
+        </small>
+
+
+        <span class="status ${
+          item.published === true
+            ? "status-good"
+            : "status-bad"
+        }">
+
+          ${
+            item.published === true
+              ? "Published"
+              : "Hidden"
+          }
+
+        </span>
+
+      `;
+
+
+      const edit =
+        document.createElement(
+          "button"
+        );
+
+
+      edit.type =
+        "button";
+
+
+      edit.textContent =
+        "Edit";
+
+
+      edit.addEventListener(
+        "click",
+        () =>
+          editItem(item.id)
+      );
+
+
+      const remove =
+        document.createElement(
+          "button"
+        );
+
+
+      remove.type =
+        "button";
+
+
+      remove.textContent =
+        "×";
+
+
+      remove.addEventListener(
+        "click",
+        () =>
+          askDelete(
+            "work",
+            item.id
+          )
+      );
+
+
+      row.append(
+
+        media,
+
+        info,
+
+        edit,
+
+        remove
+
+      );
+
+
+      table.appendChild(
+        row
+      );
 
     }
-
   );
 
 }
 
 
-/* =========================================
-   LOAD SECTIONS + CLIENTS
-========================================= */
+/* =========================================================
+   CLIENTS + CATEGORIES
+========================================================= */
 
 async function loadTaxonomy() {
 
-  try {
+  const categorySnap =
+    await getDocs(
+      collection(
+        db,
+        "categories"
+      )
+    );
 
-    const [
 
-      categorySnapshot,
+  const clientSnap =
+    await getDocs(
+      collection(
+        db,
+        "clients"
+      )
+    );
 
-      clientSnapshot
 
-    ] = await Promise.all([
+  const categories =
+    categorySnap.docs
 
-      getDocs(
-
-        query(
-
-          collection(
-            db,
-            "categories"
-          ),
-
-          orderBy(
-            "name",
-            "asc"
-          )
-
-        )
-
-      ),
-
-      getDocs(
-
-        query(
-
-          collection(
-            db,
-            "clients"
-          ),
-
-          orderBy(
-            "name",
-            "asc"
-          )
-
-        )
-
+      .map(
+        (d) =>
+          d.data()?.name
       )
 
-    ]);
+      .filter(Boolean);
 
 
-    const storedCategories =
+  const clients =
+    clientSnap.docs
 
-      categorySnapshot.docs
+      .map(
+        (d) =>
+          d.data()?.name
+      )
 
-        .map(
-          (d) =>
-            d.data().name
-        )
-
-        .filter(Boolean);
-
-
-    const storedClients =
-
-      clientSnapshot.docs
-
-        .map(
-          (d) =>
-            d.data().name
-        )
-
-        .filter(Boolean);
+      .filter(Boolean);
 
 
-    populateSelect(
+  populateSelect(
 
-      $("category"),
+    $("category"),
 
-      mergeUnique(
-        DEFAULT_CATEGORIES,
-        storedCategories
-      ),
-
-      "Choose a section"
-
-    );
-
-
-    populateSelect(
-
-      $("client"),
-
-      mergeUnique(
-        DEFAULT_CLIENTS,
-        storedClients
-      ),
-
-      "Choose a client / brand"
-
-    );
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "TAXONOMY LOAD ERROR:",
-      error
-    );
-
-
-    populateSelect(
-
-      $("category"),
-
+    mergeUnique(
       DEFAULT_CATEGORIES,
+      categories
+    ),
 
-      "Choose a section"
+    "Choose a section"
 
-    );
+  );
 
 
-    populateSelect(
+  populateSelect(
 
-      $("client"),
+    $("client"),
 
+    mergeUnique(
       DEFAULT_CLIENTS,
+      clients
+    ),
 
-      "Choose a client / brand"
+    "Choose a client / brand"
 
-    );
-
-  }
+  );
 
 }
 
-
-/* =========================================
-   MERGE OPTIONS
-========================================= */
 
 function mergeUnique(
   first,
@@ -370,31 +944,22 @@ function mergeUnique(
 
       ]
 
-      .map(
-        (value) =>
-          String(value)
-            .trim()
-      )
+        .map(
+          (x) =>
+            String(x).trim()
+        )
 
-      .filter(Boolean)
+        .filter(Boolean)
 
     )
 
-  ]
-
-  .sort(
-
+  ].sort(
     (a, b) =>
       a.localeCompare(b)
-
   );
 
 }
 
-
-/* =========================================
-   POPULATE SELECT
-========================================= */
 
 function populateSelect(
   select,
@@ -402,31 +967,30 @@ function populateSelect(
   placeholder
 ) {
 
-  if (!select)
-    return;
+  select.innerHTML =
+    "";
 
 
-  select.innerHTML = "";
-
-
-  const first =
+  const empty =
     document.createElement(
       "option"
     );
 
 
-  first.value = "";
+  empty.value =
+    "";
 
-  first.textContent =
+
+  empty.textContent =
     placeholder;
 
+
   select.appendChild(
-    first
+    empty
   );
 
 
   values.forEach(
-
     (value) => {
 
       const option =
@@ -438,6 +1002,7 @@ function populateSelect(
       option.value =
         value;
 
+
       option.textContent =
         value;
 
@@ -447,15 +1012,14 @@ function populateSelect(
       );
 
     }
-
   );
 
 }
 
 
-/* =========================================
-   ADD NEW SECTION OR CLIENT
-========================================= */
+/* =========================================================
+   ADD CLIENT / SECTION
+========================================================= */
 
 async function addTaxonomy(
   type
@@ -491,34 +1055,26 @@ async function addTaxonomy(
 
   try {
 
-    const snapshot =
+    const snap =
       await getDocs(
-
         collection(
           db,
           type
         )
-
       );
 
 
     const exists =
-      snapshot.docs.some(
-
+      snap.docs.some(
         (d) =>
 
           String(
-            d.data().name || ""
+            d.data()?.name || ""
           )
 
-          .trim()
-
-          .toLowerCase()
-
-          ===
-
+            .trim()
+            .toLowerCase() ===
           clean.toLowerCase()
-
       );
 
 
@@ -540,7 +1096,7 @@ async function addTaxonomy(
             Date.now(),
 
           createdBy:
-            currentUser.uid
+            user.uid
 
         }
 
@@ -557,24 +1113,15 @@ async function addTaxonomy(
       $("category").value =
         clean;
 
-    }
-
-    else {
+    } else {
 
       $("client").value =
         clean;
 
     }
 
-  }
 
-  catch (error) {
-
-    console.error(
-      "ADD TAXONOMY ERROR:",
-      error
-    );
-
+  } catch (error) {
 
     alert(
       error.message ||
@@ -586,237 +1133,228 @@ async function addTaxonomy(
 }
 
 
-if ($("addCategoryBtn")) {
-
-  $("addCategoryBtn").addEventListener(
-
-    "click",
-
-    () =>
-      addTaxonomy(
-        "categories"
-      )
-
-  );
-
-}
+$("addCategoryBtn").addEventListener(
+  "click",
+  () =>
+    addTaxonomy(
+      "categories"
+    )
+);
 
 
-if ($("addClientBtn")) {
-
-  $("addClientBtn").addEventListener(
-
-    "click",
-
-    () =>
-      addTaxonomy(
-        "clients"
-      )
-
-  );
-
-}
+$("addClientBtn").addEventListener(
+  "click",
+  () =>
+    addTaxonomy(
+      "clients"
+    )
+);
 
 
-/* =========================================
-   CLOUDINARY DIRECT UPLOAD
-========================================= */
+/* =========================================================
+   FILE PICKER
+========================================================= */
 
-function selectAndUpload(
+function chooseFile(
   type
 ) {
 
-  const input =
-    document.createElement(
-      "input"
-    );
+  return new Promise(
+    (resolve) => {
 
-
-  input.type =
-    "file";
-
-
-  input.style.display =
-    "none";
-
-
-  if (type === "image") {
-
-    input.accept =
-      "image/jpeg,image/jpg,image/png,image/webp";
-
-  }
-
-  else {
-
-    input.accept =
-      "video/mp4,video/quicktime,video/webm,video/x-m4v";
-
-  }
-
-
-  document.body.appendChild(
-    input
-  );
-
-
-  input.addEventListener(
-
-    "change",
-
-    async () => {
-
-      const file =
-        input.files?.[0];
-
-
-      if (!file) {
-
-        input.remove();
-
-        return;
-
-      }
-
-
-      try {
-
-        await uploadToCloudinary(
-          file,
-          type
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(
-          "CLOUDINARY ERROR:",
-          error
+      const input =
+        document.createElement(
+          "input"
         );
 
 
-        showMessage(
+      input.type =
+        "file";
 
-          error.message ||
-          "Cloudinary upload failed."
 
-        );
+      input.accept =
 
-      }
+        type === "video"
 
-      finally {
+          ? "video/mp4,video/quicktime,video/webm,video/x-m4v"
 
-        input.remove();
+          : "image/jpeg,image/png,image/webp";
 
-      }
+
+      input.style.display =
+        "none";
+
+
+      document.body.appendChild(
+        input
+      );
+
+
+      input.addEventListener(
+        "change",
+        () => {
+
+          const file =
+            input.files?.[0] ||
+            null;
+
+
+          input.remove();
+
+
+          resolve(file);
+
+        },
+        {
+          once:
+            true
+        }
+      );
+
+
+      input.click();
 
     }
-
   );
-
-
-  input.click();
 
 }
 
 
-/* =========================================
+/* =========================================================
    CLOUDINARY UPLOAD
-========================================= */
+========================================================= */
 
-async function uploadToCloudinary(
+async function uploadDirect(
+
   file,
-  type
+
+  type,
+
+  onProgress
+
 ) {
+
+  if (!file) {
+
+    throw new Error(
+      "Please choose a file first."
+    );
+
+  }
+
 
   const preset =
 
-    type === "image"
+    type === "video"
 
-      ? cloudinaryConfig.imageUploadPreset
+      ? cloudinaryConfig.videoUploadPreset
 
-      : cloudinaryConfig.videoUploadPreset;
-
-
-  if (!cloudinaryConfig.cloudName) {
-
-    throw new Error(
-      "Cloudinary cloud name is missing."
-    );
-
-  }
+      : cloudinaryConfig.imageUploadPreset;
 
 
   if (
-    !preset ||
-    preset.startsWith("REPLACE_")
+
+    !cloudinaryConfig.cloudName ||
+
+    !preset
+
   ) {
 
     throw new Error(
-      "Cloudinary upload preset is missing."
+      "Cloudinary configuration is incomplete."
+    );
+
+  }
+
+
+  const allowedImageTypes = [
+
+    "image/jpeg",
+
+    "image/png",
+
+    "image/webp"
+
+  ];
+
+
+  const allowedVideoTypes = [
+
+    "video/mp4",
+
+    "video/quicktime",
+
+    "video/webm",
+
+    "video/x-m4v"
+
+  ];
+
+
+  if (
+
+    type === "image" &&
+
+    !allowedImageTypes.includes(
+      file.type
+    )
+
+  ) {
+
+    throw new Error(
+      "Only JPG, PNG and WebP images are allowed."
     );
 
   }
 
 
   if (
+
+    type === "video" &&
+
+    !allowedVideoTypes.includes(
+      file.type
+    )
+
+  ) {
+
+    throw new Error(
+      "Only MP4, MOV, WebM and M4V videos are allowed."
+    );
+
+  }
+
+
+  if (
+
     type === "image" &&
+
     file.size >
       20 * 1024 * 1024
+
   ) {
 
     throw new Error(
-      "Image is too large. Maximum is 20 MB."
+      "Image must be 20 MB or smaller."
     );
 
   }
 
 
   if (
+
     type === "video" &&
+
     file.size >
-      100 * 1024 * 1024
+      95 * 1024 * 1024
+
   ) {
 
     throw new Error(
-      "Video is too large. Maximum is 100 MB."
+      "Video must be 95 MB or smaller."
     );
 
   }
-
-
-  if (
-    type === "image" &&
-    !file.type.startsWith(
-      "image/"
-    )
-  ) {
-
-    throw new Error(
-      "Please choose an image."
-    );
-
-  }
-
-
-  if (
-    type === "video" &&
-    !file.type.startsWith(
-      "video/"
-    )
-  ) {
-
-    throw new Error(
-      "Please choose a video."
-    );
-
-  }
-
-
-  showMessage(
-    "Uploading to Cloudinary..."
-  );
 
 
   const formData =
@@ -835,947 +1373,1877 @@ async function uploadToCloudinary(
   );
 
 
-  const resourceType =
-    type === "video"
-      ? "video"
-      : "image";
+  formData.append(
+    "tags",
+    "mariam-portfolio"
+  );
 
 
   const endpoint =
 
-    `https://api.cloudinary.com/v1_1/${
-
+    `https://api.cloudinary.com/v1_1/${encodeURIComponent(
       cloudinaryConfig.cloudName
+    )}/${type}/upload`;
 
-    }/${resourceType}/upload`;
+
+  const result =
+    await new Promise(
+
+      (resolve, reject) => {
+
+        const xhr =
+          new XMLHttpRequest();
 
 
-  const response =
-    await fetch(
-
-      endpoint,
-
-      {
-
-        method:
+        xhr.open(
           "POST",
+          endpoint
+        );
 
-        body:
+
+        xhr.responseType =
+          "json";
+
+
+        xhr.upload.addEventListener(
+          "progress",
+          (event) => {
+
+            if (
+              event.lengthComputable &&
+              onProgress
+            ) {
+
+              onProgress(
+
+                Math.round(
+
+                  event.loaded /
+                  event.total *
+                  100
+
+                )
+
+              );
+
+            }
+
+          }
+        );
+
+
+        xhr.onload =
+          () => {
+
+            if (
+
+              xhr.status >= 200 &&
+
+              xhr.status < 300
+
+            ) {
+
+              resolve(
+                xhr.response
+              );
+
+            } else {
+
+              reject(
+
+                new Error(
+
+                  xhr.response
+                    ?.error
+                    ?.message ||
+
+                  `Upload failed (${xhr.status}).`
+
+                )
+
+              );
+
+            }
+
+          };
+
+
+        xhr.onerror =
+          () => {
+
+            reject(
+
+              new Error(
+                "Network error while uploading."
+              )
+
+            );
+
+          };
+
+
+        xhr.ontimeout =
+          () => {
+
+            reject(
+
+              new Error(
+                "Upload timed out."
+              )
+
+            );
+
+          };
+
+
+        xhr.timeout =
+          10 * 60 * 1000;
+
+
+        xhr.send(
           formData
+        );
 
       }
 
     );
 
 
-  let result;
-
-
-  try {
-
-    result =
-      await response.json();
-
-  }
-
-  catch {
+  if (
+    !result?.secure_url
+  ) {
 
     throw new Error(
-      "Cloudinary returned an invalid response."
+      "Cloudinary returned no secure URL."
     );
 
   }
 
 
-  if (!response.ok) {
-
-    console.error(
-      "Cloudinary response:",
-      result
-    );
-
-
-    throw new Error(
-
-      result?.error?.message ||
-
-      `Upload failed (${response.status}).`
-
-    );
-
-  }
-
-
-  if (!result.secure_url) {
-
-    throw new Error(
-      "Cloudinary did not return a media URL."
-    );
-
-  }
-
-
-  setUpload(
-    result
-  );
-
-
-  showMessage(
-    "Upload completed successfully. Add the details and save."
-  );
+  return result;
 
 }
 
 
-/* =========================================
-   IMAGE BUTTON
-========================================= */
+/* =========================================================
+   PREVIEW
+========================================================= */
 
-if ($("imageBtn")) {
+function showPreview(
+  info
+) {
 
-  $("imageBtn").addEventListener(
-
-    "click",
-
-    () =>
-      selectAndUpload(
-        "image"
-      )
-
-  );
-
-}
+  $("preview")
+    .replaceChildren();
 
 
-/* =========================================
-   VIDEO BUTTON
-========================================= */
+  $("preview")
+    .classList
+    .remove("hidden");
 
-if ($("videoBtn")) {
 
-  $("videoBtn").addEventListener(
+  if (
+    info.resource_type ===
+    "video"
+  ) {
 
-    "click",
-
-    () =>
-      selectAndUpload(
+    const video =
+      document.createElement(
         "video"
-      )
+      );
 
-  );
+
+    video.src =
+      info.secure_url;
+
+
+    video.controls =
+      true;
+
+
+    video.muted =
+      true;
+
+
+    video.playsInline =
+      true;
+
+
+    video.style.width =
+      "100%";
+
+
+    $("preview")
+      .appendChild(video);
+
+  } else {
+
+    const image =
+      document.createElement(
+        "img"
+      );
+
+
+    image.src =
+      info.secure_url;
+
+
+    image.alt =
+      "Preview";
+
+
+    $("preview")
+      .appendChild(image);
+
+  }
 
 }
 
-
-/* =========================================
-   SET UPLOAD DATA
-========================================= */
 
 function setUpload(
   info
 ) {
 
-  if ($("url")) {
-
-    $("url").value =
-      info.secure_url ||
-      "";
-
-  }
+  $("url").value =
+    info.secure_url || "";
 
 
-  if ($("publicId")) {
-
-    $("publicId").value =
-      info.public_id ||
-      "";
-
-  }
+  $("publicId").value =
+    info.public_id || "";
 
 
-  if ($("type")) {
-
-    $("type").value =
-      info.resource_type ||
-      "image";
-
-  }
+  $("type").value =
+    info.resource_type ||
+    "image";
 
 
-  if ($("deleteToken")) {
-
-    $("deleteToken").value =
-      info.delete_token ||
-      "";
-
-  }
+  $("deleteToken").value =
+    info.delete_token ||
+    "";
 
 
-  if ($("preview")) {
+  showPreview(
+    info
+  );
 
-    $("preview").innerHTML =
-      "";
+
+  $("msg").textContent =
+    "Upload completed successfully. Add the details and save.";
+
+}
 
 
-    if (
-      info.resource_type ===
+/* =========================================================
+   UPLOAD BUTTONS
+========================================================= */
+
+$("imageBtn").addEventListener(
+  "click",
+  () =>
+    handleUpload(
+      "image"
+    )
+);
+
+
+$("videoBtn").addEventListener(
+  "click",
+  () =>
+    handleUpload(
       "video"
-    ) {
+    )
+);
 
-      const video =
-        document.createElement(
-          "video"
-        );
 
-
-      video.src =
-        info.secure_url;
-
-
-      video.controls =
-        true;
-
-
-      video.playsInline =
-        true;
-
-
-      video.muted =
-        true;
-
-
-      $("preview").appendChild(
-        video
-      );
-
-    }
-
-    else {
-
-      const image =
-        document.createElement(
-          "img"
-        );
-
-
-      image.src =
-        info.secure_url;
-
-
-      image.alt =
-        "Uploaded preview";
-
-
-      $("preview").appendChild(
-        image
-      );
-
-    }
-
-
-    $("preview").classList.remove(
-      "hidden"
-    );
-
-  }
-
-}
-
-
-/* =========================================
-   SAVE FORM
-========================================= */
-
-if ($("form")) {
-
-  $("form").addEventListener(
-
-    "submit",
-
-    async (event) => {
-
-      event.preventDefault();
-
-
-      const editingId =
-        $("editingId")?.value.trim() ||
-        "";
-
-
-      const uploadedUrl =
-        $("url")?.value.trim() ||
-        "";
-
-
-      const category =
-        $("category")?.value.trim() ||
-        "";
-
-
-      const client =
-        $("client")?.value.trim() ||
-        "";
-
-
-      if (
-        !editingId &&
-        !uploadedUrl
-      ) {
-
-        showMessage(
-          "Please upload an image or video first."
-        );
-
-        return;
-
-      }
-
-
-      if (!category) {
-
-        showMessage(
-          "Please choose a section."
-        );
-
-        return;
-
-      }
-
-
-      if (!client) {
-
-        showMessage(
-          "Please choose a client / brand."
-        );
-
-        return;
-
-      }
-
-
-      const data = {
-
-        title:
-          $("title")?.value.trim() ||
-          "",
-
-        category:
-          category,
-
-        client:
-          client,
-
-        description:
-          $("description")?.value.trim() ||
-          "",
-
-        featured:
-          $("featured")?.checked === true,
-
-        published:
-          $("published")?.checked === true,
-
-        updatedAt:
-          Date.now()
-
-      };
-
-
-      try {
-
-        if ($("save")) {
-
-          $("save").disabled =
-            true;
-
-        }
-
-
-        showMessage(
-          "Saving..."
-        );
-
-
-        /* ======================
-           NEW ITEM
-        ====================== */
-
-        if (!editingId) {
-
-          const nextOrder =
-
-            items.length
-
-              ? Math.max(
-
-                  ...items.map(
-
-                    (item) =>
-                      Number(
-                        item.order
-                      ) || 0
-
-                  )
-
-                ) + 1
-
-              : 1;
-
-
-          await addDoc(
-
-            collection(
-              db,
-              "portfolioItems"
-            ),
-
-            {
-
-              ...data,
-
-              url:
-                uploadedUrl,
-
-              publicId:
-                $("publicId")?.value ||
-                "",
-
-              type:
-                $("type")?.value ||
-                "image",
-
-              deleteToken:
-                $("deleteToken")?.value ||
-                "",
-
-              order:
-                nextOrder,
-
-              createdAt:
-                Date.now(),
-
-              createdBy:
-                currentUser.uid
-
-            }
-
-          );
-
-        }
-
-
-        /* ======================
-           UPDATE ITEM
-        ====================== */
-
-        else {
-
-          const updateData = {
-            ...data
-          };
-
-
-          if (uploadedUrl) {
-
-            updateData.url =
-              uploadedUrl;
-
-            updateData.publicId =
-              $("publicId")?.value ||
-              "";
-
-            updateData.type =
-              $("type")?.value ||
-              "image";
-
-            updateData.deleteToken =
-              $("deleteToken")?.value ||
-              "";
-
-          }
-
-
-          await updateDoc(
-
-            doc(
-              db,
-              "portfolioItems",
-              editingId
-            ),
-
-            updateData
-
-          );
-
-        }
-
-
-        resetForm();
-
-        await loadItems();
-
-
-        showMessage(
-          "Saved successfully."
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(
-          "FIRESTORE ERROR:",
-          error
-        );
-
-
-        showMessage(
-          error.message ||
-          "Could not save this item."
-        );
-
-      }
-
-      finally {
-
-        if ($("save")) {
-
-          $("save").disabled =
-            false;
-
-        }
-
-      }
-
-    }
-
-  );
-
-}
-
-
-/* =========================================
-   RESET
-========================================= */
-
-function resetForm() {
-
-  if ($("form")) {
-
-    $("form").reset();
-
-  }
-
-
-  [
-
-    "url",
-
-    "publicId",
-
-    "type",
-
-    "deleteToken",
-
-    "editingId"
-
-  ].forEach(
-
-    (id) => {
-
-      if ($(id)) {
-
-        $(id).value =
-          "";
-
-      }
-
-    }
-
-  );
-
-
-  if ($("published")) {
-
-    $("published").checked =
-      true;
-
-  }
-
-
-  if ($("preview")) {
-
-    $("preview").innerHTML =
-      "";
-
-    $("preview").classList.add(
-      "hidden"
-    );
-
-  }
-
-
-  if ($("save")) {
-
-    $("save").textContent =
-      "Save & Publish";
-
-  }
-
-
-  if ($("cancel")) {
-
-    $("cancel").classList.add(
-      "hidden"
-    );
-
-  }
-
-}
-
-
-/* =========================================
-   CANCEL EDIT
-========================================= */
-
-if ($("cancel")) {
-
-  $("cancel").addEventListener(
-
-    "click",
-
-    () => {
-
-      resetForm();
-
-      showMessage("");
-
-    }
-
-  );
-
-}
-
-
-/* =========================================
-   LOAD ITEMS
-========================================= */
-
-async function loadItems() {
+async function handleUpload(
+  type
+) {
 
   try {
 
-    const snapshot =
-      await getDocs(
+    const file =
+      await chooseFile(type);
 
-        query(
+
+    if (!file)
+      return;
+
+
+    $("msg").textContent =
+      "Uploading 0%...";
+
+
+    const info =
+      await uploadDirect(
+
+        file,
+
+        type,
+
+        (percent) => {
+
+          $("msg").textContent =
+            `Uploading ${percent}%...`;
+
+        }
+
+      );
+
+
+    setUpload(
+      info
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "UPLOAD ERROR:",
+      error
+    );
+
+
+    $("msg").textContent =
+      error.message ||
+      "Upload failed.";
+
+  }
+
+}
+
+
+/* =========================================================
+   WORK SAVE
+========================================================= */
+
+$("workForm").addEventListener(
+  "submit",
+  async (event) => {
+
+    event.preventDefault();
+
+
+    const editingId =
+      $("editingId")
+        .value
+        .trim();
+
+
+    const url =
+      $("url")
+        .value
+        .trim();
+
+
+    if (
+      !editingId &&
+      !url
+    ) {
+
+      $("msg").textContent =
+        "Upload an image or video first.";
+
+      return;
+
+    }
+
+
+    const payload = {
+
+      title:
+        $("title")
+          .value
+          .trim(),
+
+      category:
+        $("category")
+          .value
+          .trim(),
+
+      client:
+        $("client")
+          .value
+          .trim(),
+
+      description:
+        $("description")
+          .value
+          .trim(),
+
+      featured:
+        $("featured")
+          .checked,
+
+      published:
+        $("published")
+          .checked,
+
+      updatedAt:
+        Date.now()
+
+    };
+
+
+    if (
+
+      !payload.title ||
+
+      !payload.category ||
+
+      !payload.client
+
+    ) {
+
+      $("msg").textContent =
+        "Title, section and client are required.";
+
+      return;
+
+    }
+
+
+    try {
+
+      $("save").disabled =
+        true;
+
+
+      $("msg").textContent =
+        "Saving...";
+
+
+      if (!editingId) {
+
+        const nextOrder =
+
+          items.length
+
+            ? Math.max(
+
+                ...items.map(
+                  (item) =>
+                    Number(
+                      item.order
+                    ) || 0
+                )
+
+              ) + 1
+
+            : 1;
+
+
+        await addDoc(
 
           collection(
             db,
             "portfolioItems"
           ),
 
-          orderBy(
-            "order",
-            "asc"
-          )
+          {
 
-        )
+            ...payload,
 
+            url,
+
+            publicId:
+              $("publicId")
+                .value
+                .trim(),
+
+            type:
+              $("type")
+                .value ||
+              "image",
+
+            deleteToken:
+              $("deleteToken")
+                .value
+                .trim(),
+
+            order:
+              nextOrder,
+
+            createdAt:
+              Date.now(),
+
+            createdBy:
+              user.uid
+
+          }
+
+        );
+
+      } else {
+
+        const updateData = {
+          ...payload
+        };
+
+
+        if (url) {
+
+          updateData.url =
+            url;
+
+          updateData.publicId =
+            $("publicId")
+              .value
+              .trim();
+
+          updateData.type =
+            $("type")
+              .value ||
+            "image";
+
+          updateData.deleteToken =
+            $("deleteToken")
+              .value
+              .trim();
+
+        }
+
+
+        await updateDoc(
+
+          doc(
+
+            db,
+
+            "portfolioItems",
+
+            editingId
+
+          ),
+
+          updateData
+
+        );
+
+      }
+
+
+      resetWorkForm();
+
+
+      await loadEverything();
+
+
+      $("msg").textContent =
+        "Saved successfully.";
+
+
+    } catch (error) {
+
+      console.error(
+        "WORK SAVE ERROR:",
+        error
       );
 
 
-    items =
+      $("msg").textContent =
+        error.message ||
+        "Could not save work.";
 
-      snapshot.docs.map(
+    } finally {
 
-        (document) => ({
-
-          id:
-            document.id,
-
-          ...document.data()
-
-        })
-
-      );
-
-
-    updateStats();
-
-    loadCategories();
-
-    renderItems();
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "LOAD ITEMS ERROR:",
-      error
-    );
-
-
-    if ($("table")) {
-
-      $("table").innerHTML =
-
-        `<div class="row">
-          Could not load portfolio items.
-        </div>`;
+      $("save").disabled =
+        false;
 
     }
 
   }
+);
+
+
+/* =========================================================
+   RESET WORK FORM
+========================================================= */
+
+function resetWorkForm() {
+
+  $("workForm").reset();
+
+
+  $("published").checked =
+    true;
+
+
+  [
+    "url",
+    "publicId",
+    "type",
+    "deleteToken",
+    "editingId"
+  ].forEach(
+    (id) => {
+
+      $(id).value =
+        "";
+
+    }
+  );
+
+
+  $("preview")
+    .classList
+    .add("hidden");
+
+
+  $("preview")
+    .replaceChildren();
+
+
+  $("save").textContent =
+    "Save & Publish";
+
+
+  $("cancel")
+    .classList
+    .add("hidden");
+
+
+  loadTaxonomy();
 
 }
 
 
-/* =========================================
-   STATS
-========================================= */
-
-function updateStats() {
-
-  if ($("total")) {
-
-    $("total").textContent =
-      items.length;
-
-  }
+$("cancel").addEventListener(
+  "click",
+  resetWorkForm
+);
 
 
-  if ($("pub")) {
+/* =========================================================
+   EDIT WORK
+========================================================= */
 
-    $("pub").textContent =
+function editItem(
+  id
+) {
 
-      items.filter(
-
-        (item) =>
-          item.published === true
-
-      ).length;
-
-  }
-
-
-  if ($("feat")) {
-
-    $("feat").textContent =
-
-      items.filter(
-
-        (item) =>
-          item.featured === true
-
-      ).length;
-
-  }
+  const item =
+    items.find(
+      (entry) =>
+        entry.id === id
+    );
 
 
-  if ($("vid")) {
-
-    $("vid").textContent =
-
-      items.filter(
-
-        (item) =>
-          item.type === "video"
-
-      ).length;
-
-  }
-
-}
-
-
-/* =========================================
-   CATEGORY OPTIONS
-========================================= */
-
-function loadCategories() {
-
-  const categories =
-
-    [
-
-      ...new Set(
-
-        items
-
-          .map(
-            (item) =>
-              item.category
-          )
-
-          .filter(Boolean)
-
-      )
-
-    ];
-
-
-  /*
-     This is only for future typing/autocomplete
-     if the field is changed later.
-  */
-
-}
-
-
-/* =========================================
-   RENDER MANAGE WORK
-========================================= */
-
-function renderItems() {
-
-  if (!$("table"))
+  if (!item)
     return;
 
 
-  if (!items.length) {
-
-    $("table").innerHTML =
-
-      `<div class="row">
-        No items yet.
-      </div>`;
-
-    return;
-
-  }
+  $("editingId").value =
+    id;
 
 
-  $("table").innerHTML =
+  $("url").value =
     "";
 
 
-  items.forEach(
-
-    (item) => {
-
-      const row =
-        document.createElement(
-          "div"
-        );
+  $("publicId").value =
+    "";
 
 
-      row.className =
-        "row";
+  $("type").value =
+    "";
 
 
-      const thumb =
-        document.createElement(
-          "div"
-        );
+  $("deleteToken").value =
+    "";
 
 
-      thumb.className =
-        "thumb";
+  $("title").value =
+    item.title || "";
 
 
-      if (
-        item.type ===
+  ensureSelectValue(
+    $("category"),
+    item.category
+  );
+
+
+  ensureSelectValue(
+    $("client"),
+    item.client
+  );
+
+
+  $("description").value =
+    item.description || "";
+
+
+  $("featured").checked =
+    item.featured === true;
+
+
+  $("published").checked =
+    item.published === true;
+
+
+  $("preview")
+    .classList
+    .remove("hidden");
+
+
+  $("preview")
+    .replaceChildren();
+
+
+  if (
+    item.type ===
+    "video"
+  ) {
+
+    const video =
+      document.createElement(
         "video"
-      ) {
-
-        const video =
-          document.createElement(
-            "video"
-          );
+      );
 
 
-        video.src =
-          item.url;
+    video.src =
+      item.url;
 
 
-        video.muted =
-          true;
+    video.controls =
+      true;
 
 
-        video.playsInline =
-          true;
+    video.style.width =
+      "100%";
 
 
-        video.preload =
-          "metadata";
+    $("preview")
+      .appendChild(video);
+
+  } else {
+
+    const image =
+      document.createElement(
+        "img"
+      );
 
 
-        thumb.appendChild(
-          video
-        );
-
-      }
-
-      else {
-
-        const image =
-          document.createElement(
-            "img"
-          );
+    image.src =
+      item.url;
 
 
-        image.src =
-          item.url;
+    image.alt =
+      "Preview";
 
 
-        image.alt =
-          item.title ||
-          "Portfolio";
+    $("preview")
+      .appendChild(image);
+
+  }
 
 
-        thumb.appendChild(
-          image
-        );
-
-      }
+  $("save").textContent =
+    "Save Changes";
 
 
-      const info =
+  $("cancel")
+    .classList
+    .remove("hidden");
+
+
+  location.hash =
+    "upload";
+
+}
+
+
+/* =========================================================
+   EXPERIENCE
+========================================================= */
+
+async function loadExperience() {
+
+  const snap =
+    await getDocs(
+
+      collection(
+        db,
+        "experiences"
+      )
+
+    );
+
+
+  experiences =
+    snap.docs
+
+      .map(
+        (d) => ({
+
+          id:
+            d.id,
+
+          ...d.data()
+
+        })
+      )
+
+      .sort(
+
+        (a, b) =>
+
+          (Number(a.order) || 0) -
+          (Number(b.order) || 0)
+
+      );
+
+
+  renderExperience();
+
+}
+
+
+function renderExperience() {
+
+  const box =
+    $("experienceList");
+
+
+  box.innerHTML =
+    "";
+
+
+  if (!experiences.length) {
+
+    box.innerHTML = `
+
+      <div class="manage-card">
+
+        <div class="manage-main">
+
+          <p>
+            No experience yet.
+          </p>
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  experiences.forEach(
+    (experience) => {
+
+      const card =
         document.createElement(
           "div"
         );
 
 
-      const title =
-        document.createElement(
-          "strong"
+      card.className =
+        "manage-card";
+
+
+      card.innerHTML = `
+
+        <div class="manage-main">
+
+          <h3>
+
+            ${escapeHTML(
+              experience.company ||
+              ""
+            )}
+
+          </h3>
+
+
+          <p>
+
+            <strong>
+
+              ${escapeHTML(
+                experience.role ||
+                ""
+              )}
+
+            </strong>
+
+            <br>
+
+            ${escapeHTML(
+              experience.startDate ||
+              ""
+            )}
+
+            —
+
+            ${escapeHTML(
+              experience.endDate ||
+              "Present"
+            )}
+
+          </p>
+
+
+          ${
+            experience.description
+
+              ? `
+
+                <p>
+
+                  ${escapeHTML(
+                    experience.description
+                  )}
+
+                </p>
+
+              `
+
+              : ""
+          }
+
+
+          <div class="tag-row">
+
+            ${
+              Array.isArray(
+                experience.tags
+              )
+
+                ? experience.tags
+                    .map(
+                      (tag) => `
+
+                        <span class="tag">
+
+                          ${escapeHTML(
+                            tag
+                          )}
+
+                        </span>
+
+                      `
+                    )
+                    .join("")
+
+                : ""
+            }
+
+          </div>
+
+        </div>
+
+
+        <div class="manage-actions">
+
+          <button
+            type="button"
+            data-edit
+          >
+            Edit
+          </button>
+
+
+          <button
+            type="button"
+            data-delete
+          >
+            Delete
+          </button>
+
+        </div>
+
+      `;
+
+
+      card
+        .querySelector(
+          "[data-edit]"
+        )
+        .addEventListener(
+          "click",
+          () =>
+            editExperience(
+              experience.id
+            )
         );
 
 
-      title.textContent =
-        item.title ||
-        "Untitled";
-
-
-      const category =
-        document.createElement(
-          "small"
+      card
+        .querySelector(
+          "[data-delete]"
+        )
+        .addEventListener(
+          "click",
+          () =>
+            askDelete(
+              "experience",
+              experience.id
+            )
         );
 
 
-      category.textContent =
-
-        [
-
-          item.category,
-
-          item.client
-
-        ]
-
-        .filter(Boolean)
-
-        .join(
-          " • "
-        );
-
-
-      info.append(
-        title,
-        category
+      box.appendChild(
+        card
       );
+
+    }
+  );
+
+}
+
+
+$("addExperience").addEventListener(
+  "click",
+  () =>
+    openExperienceForm()
+);
+
+
+$("cancelExperience").addEventListener(
+  "click",
+  closeExperienceForm
+);
+
+
+function openExperienceForm(
+  data = null
+) {
+
+  $("experienceForm")
+    .classList
+    .remove("hidden");
+
+
+  $("experienceId").value =
+    data?.id || "";
+
+
+  $("experienceCompany").value =
+    data?.company || "";
+
+
+  $("experienceRole").value =
+    data?.role || "";
+
+
+  $("experienceStart").value =
+    data?.startDate || "";
+
+
+  $("experienceEnd").value =
+    data?.endDate || "Present";
+
+
+  $("experienceDescription").value =
+    data?.description || "";
+
+
+  $("experienceTags").value =
+    Array.isArray(
+      data?.tags
+    )
+      ? data.tags.join(", ")
+      : "";
+
+
+  window.scrollTo({
+
+    top:
+      $("experience")
+        .offsetTop -
+
+      20,
+
+    behavior:
+      "smooth"
+
+  });
+
+}
+
+
+function closeExperienceForm() {
+
+  $("experienceForm")
+    .classList
+    .add("hidden");
+
+
+  $("experienceForm")
+    .reset();
+
+
+  $("experienceId").value =
+    "";
+
+
+  $("experienceEnd").value =
+    "Present";
+
+}
+
+
+function editExperience(
+  id
+) {
+
+  openExperienceForm(
+
+    experiences.find(
+      (entry) =>
+        entry.id === id
+    )
+
+  );
+
+}
+
+
+$("experienceForm").addEventListener(
+  "submit",
+  async (event) => {
+
+    event.preventDefault();
+
+
+    const id =
+      $("experienceId")
+        .value
+        .trim();
+
+
+    const payload = {
+
+      company:
+        $("experienceCompany")
+          .value
+          .trim(),
+
+      role:
+        $("experienceRole")
+          .value
+          .trim(),
+
+      startDate:
+        $("experienceStart")
+          .value
+          .trim(),
+
+      endDate:
+        $("experienceEnd")
+          .value
+          .trim() ||
+        "Present",
+
+      description:
+        $("experienceDescription")
+          .value
+          .trim(),
+
+      tags:
+        $("experienceTags")
+          .value
+          .split(",")
+
+          .map(
+            (x) =>
+              x.trim()
+          )
+
+          .filter(Boolean),
+
+      updatedAt:
+        Date.now()
+
+    };
+
+
+    if (
+
+      !payload.company ||
+
+      !payload.role ||
+
+      !payload.startDate
+
+    ) {
+
+      $("experienceMsg").textContent =
+        "Company, role and start date are required.";
+
+      return;
+
+    }
+
+
+    try {
+
+      $("saveExperience")
+        .disabled =
+        true;
+
+
+      if (id) {
+
+        await updateDoc(
+
+          doc(
+            db,
+            "experiences",
+            id
+          ),
+
+          payload
+
+        );
+
+      } else {
+
+        const order =
+
+          experiences.length
+
+            ? Math.max(
+
+                ...experiences.map(
+                  (x) =>
+                    Number(
+                      x.order
+                    ) || 0
+                )
+
+              ) + 1
+
+            : 1;
+
+
+        await addDoc(
+
+          collection(
+            db,
+            "experiences"
+          ),
+
+          {
+
+            ...payload,
+
+            order,
+
+            createdAt:
+              Date.now(),
+
+            createdBy:
+              user.uid
+
+          }
+
+        );
+
+      }
+
+
+      closeExperienceForm();
+
+
+      await loadEverything();
+
+
+    } catch (error) {
+
+      $("experienceMsg").textContent =
+        error.message ||
+        "Could not save experience.";
+
+    } finally {
+
+      $("saveExperience")
+        .disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   EDUCATION
+========================================================= */
+
+async function loadEducation() {
+
+  const snap =
+    await getDocs(
+
+      collection(
+        db,
+        "education"
+      )
+
+    );
+
+
+  education =
+    snap.docs
+
+      .map(
+        (d) => ({
+
+          id:
+            d.id,
+
+          ...d.data()
+
+        })
+      )
+
+      .sort(
+
+        (a, b) =>
+
+          (Number(a.order) || 0) -
+          (Number(b.order) || 0)
+
+      );
+
+
+  renderEducation();
+
+}
+
+
+function renderEducation() {
+
+  const box =
+    $("educationList");
+
+
+  box.innerHTML =
+    "";
+
+
+  if (!education.length) {
+
+    box.innerHTML = `
+
+      <div class="manage-card">
+
+        <div class="manage-main">
+
+          <p>
+            No education yet.
+          </p>
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  education.forEach(
+    (entry) => {
+
+      const card =
+        document.createElement(
+          "div"
+        );
+
+
+      card.className =
+        "manage-card";
+
+
+      card.innerHTML = `
+
+        <div class="manage-main">
+
+          <h3>
+
+            ${escapeHTML(
+              entry.institution ||
+              ""
+            )}
+
+          </h3>
+
+
+          <p>
+
+            <strong>
+
+              ${escapeHTML(
+                entry.degree ||
+                ""
+              )}
+
+            </strong>
+
+
+            ${
+              entry.date
+                ? `
+
+                  <br>
+
+                  ${escapeHTML(
+                    entry.date
+                  )}
+
+                `
+                : ""
+            }
+
+          </p>
+
+
+          ${
+            entry.section
+
+              ? `
+
+                <small>
+
+                  ${escapeHTML(
+                    entry.section
+                  )}
+
+                </small>
+
+              `
+
+              : ""
+          }
+
+
+          ${
+            entry.description
+
+              ? `
+
+                <p>
+
+                  ${escapeHTML(
+                    entry.description
+                  )}
+
+                </p>
+
+              `
+
+              : ""
+          }
+
+        </div>
+
+
+        <div class="manage-actions">
+
+          <button
+            type="button"
+            data-edit
+          >
+            Edit
+          </button>
+
+
+          <button
+            type="button"
+            data-delete
+          >
+            Delete
+          </button>
+
+        </div>
+
+      `;
+
+
+      card
+        .querySelector(
+          "[data-edit]"
+        )
+        .addEventListener(
+          "click",
+          () =>
+            editEducation(
+              entry.id
+            )
+        );
+
+
+      card
+        .querySelector(
+          "[data-delete]"
+        )
+        .addEventListener(
+          "click",
+          () =>
+            askDelete(
+              "education",
+              entry.id
+            )
+        );
+
+
+      box.appendChild(
+        card
+      );
+
+    }
+  );
+
+}
+
+
+$("addEducation").addEventListener(
+  "click",
+  () =>
+    openEducationForm()
+);
+
+
+$("cancelEducation").addEventListener(
+  "click",
+  closeEducationForm
+);
+
+
+function openEducationForm(
+  data = null
+) {
+
+  $("educationForm")
+    .classList
+    .remove("hidden");
+
+
+  $("educationId").value =
+    data?.id || "";
+
+
+  $("educationInstitution").value =
+    data?.institution || "";
+
+
+  $("educationDegree").value =
+    data?.degree || "";
+
+
+  $("educationSection").value =
+    data?.section || "";
+
+
+  $("educationDate").value =
+    data?.date || "";
+
+
+  $("educationDescription").value =
+    data?.description || "";
+
+
+  window.scrollTo({
+
+    top:
+      $("education")
+        .offsetTop -
+
+      20,
+
+    behavior:
+      "smooth"
+
+  });
+
+}
+
+
+function closeEducationForm() {
+
+  $("educationForm")
+    .classList
+    .add("hidden");
+
+
+  $("educationForm")
+    .reset();
+
+
+  $("educationId").value =
+    "";
+
+}
+
+
+function editEducation(
+  id
+) {
+
+  openEducationForm(
+
+    education.find(
+      (entry) =>
+        entry.id === id
+    )
+
+  );
+
+}
+
+
+$("educationForm").addEventListener(
+  "submit",
+  async (event) => {
+
+    event.preventDefault();
+
+
+    const id =
+      $("educationId")
+        .value
+        .trim();
+
+
+    const payload = {
+
+      institution:
+        $("educationInstitution")
+          .value
+          .trim(),
+
+      degree:
+        $("educationDegree")
+          .value
+          .trim(),
+
+      section:
+        $("educationSection")
+          .value
+          .trim(),
+
+      date:
+        $("educationDate")
+          .value
+          .trim(),
+
+      description:
+        $("educationDescription")
+          .value
+          .trim(),
+
+      updatedAt:
+        Date.now()
+
+    };
+
+
+    if (
+
+      !payload.institution ||
+
+      !payload.degree
+
+    ) {
+
+      $("educationMsg").textContent =
+        "Institution and degree are required.";
+
+      return;
+
+    }
+
+
+    try {
+
+      $("saveEducation")
+        .disabled =
+        true;
+
+
+      if (id) {
+
+        await updateDoc(
+
+          doc(
+            db,
+            "education",
+            id
+          ),
+
+          payload
+
+        );
+
+      } else {
+
+        const order =
+
+          education.length
+
+            ? Math.max(
+
+                ...education.map(
+                  (x) =>
+                    Number(
+                      x.order
+                    ) || 0
+                )
+
+              ) + 1
+
+            : 1;
+
+
+        await addDoc(
+
+          collection(
+            db,
+            "education"
+          ),
+
+          {
+
+            ...payload,
+
+            order,
+
+            createdAt:
+              Date.now(),
+
+            createdBy:
+              user.uid
+
+          }
+
+        );
+
+      }
+
+
+      closeEducationForm();
+
+
+      await loadEverything();
+
+
+    } catch (error) {
+
+      $("educationMsg").textContent =
+        error.message ||
+        "Could not save education.";
+
+    } finally {
+
+      $("saveEducation")
+        .disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   SKILLS
+========================================================= */
+
+async function loadSkills() {
+
+  const snap =
+    await getDocs(
+
+      collection(
+        db,
+        "skills"
+      )
+
+    );
+
+
+  skills =
+    snap.docs
+
+      .map(
+        (d) => ({
+
+          id:
+            d.id,
+
+          ...d.data()
+
+        })
+      )
+
+      .sort(
+
+        (a, b) =>
+
+          (Number(a.order) || 0) -
+          (Number(b.order) || 0)
+
+      );
+
+
+  renderSkills();
+
+}
+
+
+function renderSkills() {
+
+  const box =
+    $("skillList");
+
+
+  box.innerHTML =
+    "";
+
+
+  if (!skills.length) {
+
+    box.innerHTML =
+      "<span>No skills yet.</span>";
+
+    return;
+
+  }
+
+
+  skills.forEach(
+    (skill) => {
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        "skill-admin-item";
+
+
+      const text =
+        document.createElement(
+          "span"
+        );
+
+
+      text.textContent =
+
+        skill.level
+
+          ? `${skill.name} — ${skill.level}`
+
+          : skill.name || "";
 
 
       const edit =
@@ -1789,18 +3257,15 @@ function renderItems() {
 
 
       edit.textContent =
-        "Edit";
+        "✎";
 
 
       edit.addEventListener(
-
         "click",
-
         () =>
-          startEdit(
-            item
+          editSkill(
+            skill.id
           )
-
       );
 
 
@@ -1819,243 +3284,256 @@ function renderItems() {
 
 
       remove.addEventListener(
-
         "click",
-
         () =>
-          openDelete(
-            item.id
+          askDelete(
+            "skill",
+            skill.id
           )
-
       );
 
 
-      row.append(
-
-        thumb,
-
-        info,
-
+      item.append(
+        text,
         edit,
-
         remove
-
       );
 
 
-      $("table").appendChild(
-        row
+      box.appendChild(
+        item
       );
 
     }
-
   );
 
 }
 
 
-/* =========================================
-   EDIT ITEM
-========================================= */
+$("addSkill").addEventListener(
+  "click",
+  () =>
+    openSkillForm()
+);
 
-function startEdit(
-  item
+
+$("cancelSkill").addEventListener(
+  "click",
+  closeSkillForm
+);
+
+
+function openSkillForm(
+  data = null
 ) {
 
-  $("editingId").value =
-    item.id;
+  $("skillForm")
+    .classList
+    .remove("hidden");
 
 
-  $("url").value =
-    "";
+  $("skillId").value =
+    data?.id || "";
 
 
-  $("publicId").value =
-    "";
+  $("skillName").value =
+    data?.name || "";
 
 
-  $("deleteToken").value =
-    "";
+  $("skillLevel").value =
+    data?.level || "";
 
 
-  $("type").value =
-    item.type ||
-    "image";
+  window.scrollTo({
 
+    top:
+      $("skills")
+        .offsetTop -
 
-  $("title").value =
-    item.title ||
-    "";
+      20,
 
+    behavior:
+      "smooth"
 
-  $("category").value =
-    item.category ||
-    "";
-
-
-  $("client").value =
-    item.client ||
-    "";
-
-
-  $("description").value =
-    item.description ||
-    "";
-
-
-  $("featured").checked =
-    item.featured === true;
-
-
-  $("published").checked =
-    item.published === true;
-
-
-  $("preview").innerHTML =
-    "";
-
-
-  $("preview").classList.add(
-    "hidden"
-  );
-
-
-  $("save").textContent =
-    "Save Changes";
-
-
-  $("cancel").classList.remove(
-    "hidden"
-  );
-
-
-  showMessage(
-
-    "Editing item. Upload a new file only if you want to replace it."
-
-  );
-
-
-  location.hash =
-    "upload";
+  });
 
 }
 
 
-/* =========================================
-   DELETE
-========================================= */
+function closeSkillForm() {
 
-function openDelete(
+  $("skillForm")
+    .classList
+    .add("hidden");
+
+
+  $("skillForm")
+    .reset();
+
+
+  $("skillId").value =
+    "";
+
+}
+
+
+function editSkill(
   id
 ) {
 
-  deleteId =
-    id;
+  openSkillForm(
 
-
-  if ($("confirm")) {
-
-    $("confirm").classList.add(
-      "active"
-    );
-
-  }
-
-}
-
-
-if ($("cancelDelete")) {
-
-  $("cancelDelete").addEventListener(
-
-    "click",
-
-    () => {
-
-      deleteId =
-        null;
-
-
-      $("confirm").classList.remove(
-        "active"
-      );
-
-    }
+    skills.find(
+      (skill) =>
+        skill.id === id
+    )
 
   );
 
 }
 
 
-if ($("delete")) {
+$("skillForm").addEventListener(
+  "submit",
+  async (event) => {
 
-  $("delete").addEventListener(
-
-    "click",
-
-    async () => {
-
-      if (!deleteId)
-        return;
+    event.preventDefault();
 
 
-      try {
+    const id =
+      $("skillId")
+        .value
+        .trim();
 
-        await deleteDoc(
+
+    const payload = {
+
+      name:
+        $("skillName")
+          .value
+          .trim(),
+
+      level:
+        $("skillLevel")
+          .value
+          .trim(),
+
+      updatedAt:
+        Date.now()
+
+    };
+
+
+    if (!payload.name) {
+
+      $("skillMsg").textContent =
+        "Skill name is required.";
+
+      return;
+
+    }
+
+
+    try {
+
+      $("saveSkill")
+        .disabled =
+        true;
+
+
+      if (id) {
+
+        await updateDoc(
 
           doc(
             db,
-            "portfolioItems",
-            deleteId
-          )
+            "skills",
+            id
+          ),
+
+          payload
 
         );
 
+      } else {
 
-        deleteId =
-          null;
+        const order =
+
+          skills.length
+
+            ? Math.max(
+
+                ...skills.map(
+                  (x) =>
+                    Number(
+                      x.order
+                    ) || 0
+                )
+
+              ) + 1
+
+            : 1;
 
 
-        $("confirm").classList.remove(
-          "active"
+        await addDoc(
+
+          collection(
+            db,
+            "skills"
+          ),
+
+          {
+
+            ...payload,
+
+            order,
+
+            createdAt:
+              Date.now(),
+
+            createdBy:
+              user.uid
+
+          }
+
         );
-
-
-        await loadItems();
 
       }
 
-      catch (error) {
 
-        console.error(
-          "DELETE ERROR:",
-          error
-        );
+      closeSkillForm();
 
 
-        alert(
-          "Could not delete the item."
-        );
+      await loadEverything();
 
-      }
+
+    } catch (error) {
+
+      $("skillMsg").textContent =
+        error.message ||
+        "Could not save skill.";
+
+    } finally {
+
+      $("saveSkill")
+        .disabled =
+        false;
 
     }
 
-  );
+  }
+);
 
-}
 
-
-/* =========================================
+/* =========================================================
    PROFILE
-========================================= */
+========================================================= */
 
 async function loadProfile() {
 
   try {
 
-    const snapshot =
+    const snap =
       await getDoc(
 
         doc(
@@ -2068,40 +3546,52 @@ async function loadProfile() {
 
 
     if (
-
-      snapshot.exists() &&
-
-      snapshot.data()?.url
-
+      !snap.exists()
     ) {
 
-      $("currentProfile").innerHTML =
-        "";
+      $("currentProfile").textContent =
+        "No profile photo uploaded yet.";
 
-
-      const image =
-        document.createElement(
-          "img"
-        );
-
-
-      image.src =
-        snapshot.data().url;
-
-
-      image.alt =
-        "Current profile photo";
-
-
-      $("currentProfile").appendChild(
-        image
-      );
+      return;
 
     }
 
-  }
 
-  catch (error) {
+    const data =
+      snap.data();
+
+
+    if (!data?.url) {
+
+      $("currentProfile").textContent =
+        "No profile photo uploaded yet.";
+
+      return;
+
+    }
+
+
+    const image =
+      document.createElement(
+        "img"
+      );
+
+
+    image.src =
+      data.url;
+
+
+    image.alt =
+      "Current profile photo";
+
+
+    $("currentProfile")
+      .replaceChildren(
+        image
+      );
+
+
+  } catch (error) {
 
     console.error(
       "PROFILE ERROR:",
@@ -2113,260 +3603,538 @@ async function loadProfile() {
 }
 
 
-/* =========================================
-   PROFILE UPLOAD
-========================================= */
+$("profileBtn").addEventListener(
+  "click",
+  async () => {
 
-if ($("profileBtn")) {
+    try {
 
-  $("profileBtn").addEventListener(
+      $("profileMsg").textContent =
+        "Choose a profile photo...";
 
-    "click",
-
-    () => {
-
-      selectAndUploadProfile();
-
-    }
-
-  );
-
-}
-
-
-function selectAndUploadProfile() {
-
-  const input =
-    document.createElement(
-      "input"
-    );
-
-
-  input.type =
-    "file";
-
-
-  input.accept =
-    "image/jpeg,image/jpg,image/png,image/webp";
-
-
-  input.style.display =
-    "none";
-
-
-  document.body.appendChild(
-    input
-  );
-
-
-  input.addEventListener(
-
-    "change",
-
-    async () => {
 
       const file =
-        input.files?.[0];
+        await chooseFile(
+          "image"
+        );
 
 
-      if (!file) {
-
-        input.remove();
-
+      if (!file)
         return;
 
-      }
 
+      const info =
+        await uploadDirect(
 
-      try {
+          file,
 
-        const preset =
-          cloudinaryConfig.imageUploadPreset;
+          "image",
 
+          (percent) => {
 
-        if (!preset) {
-
-          throw new Error(
-            "Cloudinary image preset is missing."
-          );
-
-        }
-
-
-        const formData =
-          new FormData();
-
-
-        formData.append(
-          "file",
-          file
-        );
-
-
-        formData.append(
-          "upload_preset",
-          preset
-        );
-
-
-        const response =
-          await fetch(
-
-            `https://api.cloudinary.com/v1_1/${
-              cloudinaryConfig.cloudName
-            }/image/upload`,
-
-            {
-
-              method:
-                "POST",
-
-              body:
-                formData
-
-            }
-
-          );
-
-
-        const result =
-          await response.json();
-
-
-        if (!response.ok) {
-
-          throw new Error(
-
-            result?.error?.message ||
-            "Profile image upload failed."
-
-          );
-
-        }
-
-
-        await setDoc(
-
-          doc(
-            db,
-            "siteSettings",
-            "profile"
-          ),
-
-          {
-
-            url:
-              result.secure_url,
-
-            publicId:
-              result.public_id ||
-              "",
-
-            updatedAt:
-              Date.now(),
-
-            updatedBy:
-              currentUser.uid
+            $("profileMsg").textContent =
+              `Uploading profile photo ${percent}%...`;
 
           }
 
         );
 
 
-        await loadProfile();
+      await setDoc(
 
+        doc(
+          db,
+          "siteSettings",
+          "profile"
+        ),
 
-        if ($("profileMsg")) {
+        {
 
-          $("profileMsg").textContent =
-            "Profile photo updated successfully.";
+          url:
+            info.secure_url,
 
-        }
+          publicId:
+            info.public_id ||
+            "",
 
-      }
+          updatedAt:
+            Date.now(),
 
-      catch (error) {
-
-        console.error(
-          "PROFILE UPLOAD ERROR:",
-          error
-        );
-
-
-        if ($("profileMsg")) {
-
-          $("profileMsg").textContent =
-            error.message ||
-            "Could not upload profile photo.";
+          updatedBy:
+            user.uid
 
         }
 
-      }
+      );
 
-      finally {
 
-        input.remove();
+      await loadProfile();
 
-      }
+
+      $("profileMsg").textContent =
+        "Profile photo updated.";
+
+    } catch (error) {
+
+      console.error(
+        "PROFILE UPLOAD ERROR:",
+        error
+      );
+
+
+      $("profileMsg").textContent =
+        error.message ||
+        "Could not update profile photo.";
 
     }
 
-  );
+  }
+);
 
 
-  input.click();
+/* =========================================================
+   SITE CONTENT
+========================================================= */
 
-}
+async function loadContent() {
 
+  try {
 
-/* =========================================
-   REFRESH
-========================================= */
+    const snap =
+      await getDoc(
 
-if ($("refresh")) {
+        doc(
+          db,
+          "siteSettings",
+          "content"
+        )
 
-  $("refresh").addEventListener(
-
-    "click",
-
-    loadItems
-
-  );
-
-}
+      );
 
 
-/* =========================================
-   MESSAGE
-========================================= */
+    const data =
+      snap.exists()
+        ? {
+            ...DEFAULT_CONTENT,
+            ...snap.data()
+          }
+        : DEFAULT_CONTENT;
 
-function showMessage(
-  message
-) {
 
-  if ($("msg")) {
+    $("heroEyebrow").value =
+      data.heroEyebrow ||
+      "";
 
-    $("msg").textContent =
-      message;
+
+    $("heroTitle").value =
+      data.heroTitle ||
+      "";
+
+
+    $("heroLead").value =
+      data.heroLead ||
+      "";
+
+
+    $("aboutHeading").value =
+      data.aboutHeading ||
+      "";
+
+
+    $("aboutIntro").value =
+      data.aboutIntro ||
+      "";
+
+
+    $("aboutBody").value =
+      data.aboutBody ||
+      "";
+
+
+    $("aboutQuote").value =
+      data.aboutQuote ||
+      "";
+
+
+    $("contactHeading").value =
+      data.contactHeading ||
+      "";
+
+
+    $("contactEmail").value =
+      data.contactEmail ||
+      "";
+
+
+    $("contactPhone1").value =
+      data.contactPhone1 ||
+      "";
+
+
+    $("contactPhone2").value =
+      data.contactPhone2 ||
+      "";
+
+
+    $("contactLocation").value =
+      data.contactLocation ||
+      "";
+
+
+  } catch (error) {
+
+    console.error(
+      "CONTENT LOAD ERROR:",
+      error
+    );
 
   }
 
 }
 
 
-/* =========================================
-   ESCAPE HTML
-========================================= */
+$("contentForm").addEventListener(
+  "submit",
+  async (event) => {
+
+    event.preventDefault();
+
+
+    const payload = {
+
+      heroEyebrow:
+        $("heroEyebrow")
+          .value
+          .trim(),
+
+      heroTitle:
+        $("heroTitle")
+          .value
+          .trim(),
+
+      heroLead:
+        $("heroLead")
+          .value
+          .trim(),
+
+      aboutHeading:
+        $("aboutHeading")
+          .value
+          .trim(),
+
+      aboutIntro:
+        $("aboutIntro")
+          .value
+          .trim(),
+
+      aboutBody:
+        $("aboutBody")
+          .value
+          .trim(),
+
+      aboutQuote:
+        $("aboutQuote")
+          .value
+          .trim(),
+
+      contactHeading:
+        $("contactHeading")
+          .value
+          .trim(),
+
+      contactEmail:
+        $("contactEmail")
+          .value
+          .trim(),
+
+      contactPhone1:
+        $("contactPhone1")
+          .value
+          .trim(),
+
+      contactPhone2:
+        $("contactPhone2")
+          .value
+          .trim(),
+
+      contactLocation:
+        $("contactLocation")
+          .value
+          .trim(),
+
+      updatedAt:
+        Date.now(),
+
+      updatedBy:
+        user.uid
+
+    };
+
+
+    try {
+
+      $("saveContent")
+        .disabled =
+        true;
+
+
+      await setDoc(
+
+        doc(
+          db,
+          "siteSettings",
+          "content"
+        ),
+
+        payload,
+
+        {
+          merge:
+            true
+        }
+
+      );
+
+
+      $("contentMsg").textContent =
+        "Site content saved successfully.";
+
+
+    } catch (error) {
+
+      $("contentMsg").textContent =
+        error.message ||
+        "Could not save site content.";
+
+    } finally {
+
+      $("saveContent")
+        .disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+function askDelete(
+  type,
+  id
+) {
+
+  deleteTarget = {
+    type,
+    id
+  };
+
+
+  const names = {
+
+    work:
+      "this work",
+
+    experience:
+      "this experience",
+
+    education:
+      "this education",
+
+    skill:
+      "this skill"
+
+  };
+
+
+  $("confirmText").textContent =
+
+    `Are you sure you want to remove ${names[type]}?`;
+
+
+  $("confirm")
+    .classList
+    .add("active");
+
+}
+
+
+$("cancelDelete").addEventListener(
+  "click",
+  () => {
+
+    deleteTarget =
+      null;
+
+
+    $("confirm")
+      .classList
+      .remove("active");
+
+  }
+);
+
+
+$("delete").addEventListener(
+  "click",
+  async () => {
+
+    if (!deleteTarget)
+      return;
+
+
+    try {
+
+      $("delete").disabled =
+        true;
+
+
+      const collectionName = {
+
+        work:
+          "portfolioItems",
+
+        experience:
+          "experiences",
+
+        education:
+          "education",
+
+        skill:
+          "skills"
+
+      }[
+        deleteTarget.type
+      ];
+
+
+      await deleteDoc(
+
+        doc(
+
+          db,
+
+          collectionName,
+
+          deleteTarget.id
+
+        )
+
+      );
+
+
+      deleteTarget =
+        null;
+
+
+      $("confirm")
+        .classList
+        .remove("active");
+
+
+      await loadEverything();
+
+
+    } catch (error) {
+
+      alert(
+        error.message ||
+        "Could not remove item."
+      );
+
+
+    } finally {
+
+      $("delete").disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+$("refresh").addEventListener(
+  "click",
+  async () => {
+
+    await loadEverything();
+
+    await loadTaxonomy();
+
+    await loadProfile();
+
+    await loadContent();
+
+  }
+);
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function ensureSelectValue(
+  select,
+  value
+) {
+
+  if (!value)
+    return;
+
+
+  const found =
+    [...select.options]
+      .some(
+        (option) =>
+          option.value ===
+          value
+      );
+
+
+  if (!found) {
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+
+    option.value =
+      value;
+
+
+    option.textContent =
+      value;
+
+
+    select.appendChild(
+      option
+    );
+
+  }
+
+
+  select.value =
+    value;
+
+}
+
 
 function escapeHTML(
   value
 ) {
 
   return String(
-    value
-  )
-
-  .replace(
+    value ?? ""
+  ).replace(
 
     /[&<>"']/g,
 
@@ -2392,3 +4160,45 @@ function escapeHTML(
   );
 
 }
+
+
+/* =========================================================
+   CLICKABLE STATS
+========================================================= */
+
+document
+  .querySelectorAll(
+    "[data-jump]"
+  )
+  .forEach(
+    (button) => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const target =
+            document.querySelector(
+              button.dataset.jump
+            );
+
+
+          if (!target)
+            return;
+
+
+          target.scrollIntoView({
+
+            behavior:
+              "smooth",
+
+            block:
+              "start"
+
+          });
+
+        }
+      );
+
+    }
+  );
