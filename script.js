@@ -1,10 +1,9 @@
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
 import {
   getAuth,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
@@ -12,7 +11,6 @@ import {
   collection,
   query,
   where,
-  orderBy,
   getDocs,
   getDoc,
   doc
@@ -28,76 +26,118 @@ import {
 ========================================================= */
 
 const app =
-  initializeApp(firebaseConfig);
+  initializeApp(
+    firebaseConfig
+  );
+
 
 const auth =
-  getAuth(app);
+  getAuth(
+    app
+  );
+
 
 const db =
-  getFirestore(app);
+  getFirestore(
+    app
+  );
+
 
 const $ =
   (id) =>
-    document.getElementById(id);
+    document.getElementById(
+      id
+    );
+
+
+/* =========================================================
+   DEFAULT CONTENT
+========================================================= */
+
+const DEFAULT_CONTENT = {
+
+  heroEyebrow:
+    "Public Relations & Content Creator",
+
+  heroTitle:
+    "Mariam Mohamed",
+
+  heroLead:
+    "Building meaningful connections, creating engaging content, and turning ideas into visual stories.",
+
+  aboutHeading:
+    "Creative communication with a human touch.",
+
+  aboutIntro:
+    "I'm a media graduate with hands-on experience in Public Relations and Content Creation, alongside Customer Relations and Front Office Operations.",
+
+  aboutBody:
+    "My work combines client communication, content planning, filming, short-form video editing, social media support, and team coordination.",
+
+  aboutQuote:
+    "Creating content is not only about what people see — it is about how the story makes them feel.",
+
+  contactHeading:
+    "Have an idea? Let's create something memorable.",
+
+  contactEmail:
+    "Mariam.badawy07@gmail.com",
+
+  contactPhone1:
+    "+20 110 204 8078",
+
+  contactPhone2:
+    "+20 106 762 3833",
+
+  contactLocation:
+    "El Shorouk City, Cairo, Egypt"
+
+};
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let allItems = [];
+
+let clientFilter =
+  "all";
+
+let categoryFilter =
+  "all";
 
 
 /* =========================================================
    YEAR
 ========================================================= */
 
-if ($("year")) {
-  $("year").textContent =
-    new Date().getFullYear();
-}
+$("year").textContent =
+  new Date()
+    .getFullYear();
 
 
 /* =========================================================
    MOBILE MENU
 ========================================================= */
 
-const menuToggle =
-  $("menuToggle");
+$("menuToggle").addEventListener(
+  "click",
+  () => {
 
-const navLinks =
-  $("navLinks");
-
-
-if (menuToggle && navLinks) {
-
-  menuToggle.addEventListener(
-    "click",
-    () => {
-
-      navLinks.classList.toggle(
+    $("navLinks")
+      .classList
+      .toggle(
         "open"
       );
 
-      menuToggle.classList.toggle(
-        "active"
-      );
+  }
+);
 
-      menuToggle.setAttribute(
-        "aria-expanded",
-        String(
-          navLinks.classList.contains(
-            "open"
-          )
-        )
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   CLOSE MOBILE MENU
-========================================================= */
 
 document
   .querySelectorAll(
-    ".nav-links a"
+    "#navLinks a"
   )
   .forEach(
     (link) => {
@@ -106,13 +146,11 @@ document
         "click",
         () => {
 
-          navLinks?.classList.remove(
-            "open"
-          );
-
-          menuToggle?.classList.remove(
-            "active"
-          );
+          $("navLinks")
+            .classList
+            .remove(
+              "open"
+            );
 
         }
       );
@@ -122,131 +160,51 @@ document
 
 
 /* =========================================================
-   REVEAL ANIMATION
+   ADMIN MODAL
 ========================================================= */
 
-if (
-  "IntersectionObserver"
-  in window
-) {
+$("adminEntry").addEventListener(
+  "click",
+  () => {
 
-  const revealObserver =
-    new IntersectionObserver(
-
-      (entries) => {
-
-        entries.forEach(
-          (entry) => {
-
-            if (
-              entry.isIntersecting
-            ) {
-
-              entry.target
-                .classList
-                .add("visible");
-
-              revealObserver.unobserve(
-                entry.target
-              );
-
-            }
-
-          }
-        );
-
-      },
-
-      {
-        threshold: 0.12
-      }
-
-    );
-
-
-  document
-    .querySelectorAll(
-      ".reveal"
-    )
-    .forEach(
-      (element) => {
-
-        revealObserver.observe(
-          element
-        );
-
-      }
-    );
-
-}
-
-
-/* =========================================================
-   ADMIN LOGIN
-========================================================= */
-
-const authModal =
-  $("authModal");
-
-
-if ($("adminEntry")) {
-
-  $("adminEntry").addEventListener(
-    "click",
-    () => {
-
-      authModal?.classList.add(
+    $("authModal")
+      .classList
+      .add(
         "active"
       );
 
-      authModal?.setAttribute(
-        "aria-hidden",
-        "false"
+  }
+);
+
+
+$("authClose").addEventListener(
+  "click",
+  () => {
+
+    $("authModal")
+      .classList
+      .remove(
+        "active"
       );
 
-      $("loginEmail")?.focus();
-
-    }
-  );
-
-}
+  }
+);
 
 
-/* =========================================================
-   CLOSE ADMIN LOGIN
-========================================================= */
-
-function closeAuth() {
-
-  authModal?.classList.remove(
-    "active"
-  );
-
-  authModal?.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-}
-
-
-$("authClose")
-  ?.addEventListener(
-    "click",
-    closeAuth
-  );
-
-
-authModal?.addEventListener(
+$("authModal").addEventListener(
   "click",
   (event) => {
 
     if (
       event.target ===
-      authModal
+      $("authModal")
     ) {
 
-      closeAuth();
+      $("authModal")
+        .classList
+        .remove(
+          "active"
+        );
 
     }
 
@@ -255,77 +213,71 @@ authModal?.addEventListener(
 
 
 /* =========================================================
-   ADMIN LOGIN SUBMIT
+   ADMIN LOGIN
 ========================================================= */
 
-$("loginForm")?.addEventListener(
+$("loginForm").addEventListener(
   "submit",
   async (event) => {
 
     event.preventDefault();
 
 
-    const email =
-      $("loginEmail")
-        ?.value
-        .trim();
-
-    const password =
-      $("loginPassword")
-        ?.value;
-
-
-    if ($("loginMessage")) {
-
-      $("loginMessage")
-        .textContent =
-        "Signing in...";
-
-    }
+    $("loginMessage").textContent =
+      "Signing in...";
 
 
     try {
 
-      const credential =
+      const result =
         await signInWithEmailAndPassword(
+
           auth,
-          email,
-          password
+
+          $("loginEmail")
+            .value
+            .trim(),
+
+          $("loginPassword")
+            .value
+
         );
 
 
-      const adminDoc =
+      const adminSnap =
         await getDoc(
 
           doc(
             db,
             "admins",
-            credential.user.uid
+            result.user.uid
           )
 
         );
 
 
       if (
-        !adminDoc.exists() ||
-        adminDoc.data()?.active !== true
+        !adminSnap.exists() ||
+        adminSnap.data()?.active !== true
       ) {
 
-        await auth.signOut();
+        await signOut(
+          auth
+        );
+
 
         throw new Error(
-          "Unauthorized admin."
+          "Unauthorized"
         );
 
       }
 
 
-      window.location.href =
+      location.href =
         "admin.html";
 
-    }
 
-    catch (error) {
+    } catch (error) {
 
       console.error(
         "LOGIN ERROR:",
@@ -333,13 +285,9 @@ $("loginForm")?.addEventListener(
       );
 
 
-      if ($("loginMessage")) {
-
-        $("loginMessage")
-          .textContent =
-          "Login failed. Check the email/password.";
-
-      }
+      $("loginMessage")
+        .textContent =
+        "Login failed. Check your email and password.";
 
     }
 
@@ -348,24 +296,82 @@ $("loginForm")?.addEventListener(
 
 
 /* =========================================================
-   PORTFOLIO VARIABLES
+   STYLED HEADING
 ========================================================= */
 
-let allItems = [];
+function setStyledText(
+  element,
+  value
+) {
 
-let selectedClient =
-  "all";
+  if (!element)
+    return;
+
+
+  const text =
+    String(
+      value || ""
+    ).trim();
+
+
+  if (!text) {
+
+    element.textContent =
+      "";
+
+    return;
+
+  }
+
+
+  const words =
+    text.split(
+      /\s+/
+    );
+
+
+  if (
+    words.length < 2
+  ) {
+
+    element.textContent =
+      text;
+
+    return;
+
+  }
+
+
+  const last =
+    words.pop();
+
+
+  element.innerHTML =
+
+    `${escapeHTML(
+      words.join(" ")
+    )}
+
+    <em>
+
+      ${escapeHTML(
+        last
+      )}
+
+    </em>`;
+
+}
 
 
 /* =========================================================
-   LOAD PROFILE
+   PROFILE
 ========================================================= */
 
 async function loadProfile() {
 
   try {
 
-    const snapshot =
+    const snap =
       await getDoc(
 
         doc(
@@ -378,30 +384,19 @@ async function loadProfile() {
 
 
     if (
-      !snapshot.exists()
-    ) {
+      !snap.exists()
+    )
       return;
-    }
 
 
-    const profileData =
-      snapshot.data();
+    const data =
+      snap.data();
 
 
     if (
-      !profileData?.url
-    ) {
+      !data?.url
+    )
       return;
-    }
-
-
-    const placeholder =
-      $("profilePlaceholder");
-
-
-    if (!placeholder) {
-      return;
-    }
 
 
     const image =
@@ -411,7 +406,7 @@ async function loadProfile() {
 
 
     image.src =
-      profileData.url;
+      data.url;
 
 
     image.alt =
@@ -422,16 +417,16 @@ async function loadProfile() {
       "portrait-photo";
 
 
-    placeholder.replaceWith(
-      image
-    );
+    $("profileBox")
+      .replaceChildren(
+        image
+      );
 
-  }
 
-  catch (error) {
+  } catch (error) {
 
     console.error(
-      "PROFILE LOAD ERROR:",
+      "PROFILE ERROR:",
       error
     );
 
@@ -441,84 +436,374 @@ async function loadProfile() {
 
 
 /* =========================================================
-   LOAD PORTFOLIO
+   SITE CONTENT
 ========================================================= */
 
-async function loadPortfolio() {
-
-  const grid =
-    $("mediaGrid");
-
-
-  if (!grid) {
-    return;
-  }
-
+async function loadContent() {
 
   try {
 
-    const portfolioQuery =
-      query(
+    const snap =
+      await getDoc(
 
-        collection(
+        doc(
           db,
-          "portfolioItems"
-        ),
-
-        where(
-          "published",
-          "==",
-          true
-        ),
-
-        orderBy(
-          "order",
-          "asc"
+          "siteSettings",
+          "content"
         )
 
       );
 
 
-    const snapshot =
-      await getDocs(
-        portfolioQuery
-      );
+    const content =
+
+      snap.exists()
+
+        ? {
+            ...DEFAULT_CONTENT,
+            ...snap.data()
+          }
+
+        : DEFAULT_CONTENT;
 
 
-    allItems =
-      snapshot.docs.map(
-        (document) => ({
-
-          id:
-            document.id,
-
-          ...document.data()
-
-        })
-      );
+    $("heroEyebrow")
+      .textContent =
+      content.heroEyebrow;
 
 
-    buildClientFilters();
+    setStyledText(
+      $("heroTitle"),
+      content.heroTitle
+    );
 
-    renderPortfolio();
 
-    renderFeatured();
+    $("heroLead")
+      .textContent =
+      content.heroLead;
+
+
+    setStyledText(
+      $("aboutHeading"),
+      content.aboutHeading
+    );
+
+
+    $("aboutIntro")
+      .textContent =
+      content.aboutIntro;
+
+
+    $("aboutBody")
+      .textContent =
+      content.aboutBody;
+
+
+    $("aboutQuote")
+      .textContent =
+      content.aboutQuote;
+
+
+    setStyledText(
+      $("contactHeading"),
+      content.contactHeading
+    );
+
+
+    /* =====================================================
+       EMAIL
+    ===================================================== */
+
+    const email =
+      content.contactEmail ||
+      DEFAULT_CONTENT.contactEmail;
+
+
+    $("contactEmail")
+      .textContent =
+      `${email} ↗`;
+
+
+    $("contactEmail")
+      .href =
+      `mailto:${email}`;
+
+
+    /* =====================================================
+       PHONE 1
+    ===================================================== */
+
+    const phone1 =
+      content.contactPhone1 ||
+      DEFAULT_CONTENT.contactPhone1;
+
+
+    $("contactPhone1")
+      .textContent =
+      phone1;
+
+
+    $("contactPhone1")
+      .href =
+      `tel:${phone1.replace(
+        /[^\d+]/g,
+        ""
+      )}`;
+
+
+    /* =====================================================
+       PHONE 2
+    ===================================================== */
+
+    const phone2 =
+      content.contactPhone2 ||
+      DEFAULT_CONTENT.contactPhone2;
+
+
+    $("contactPhone2")
+      .textContent =
+      phone2;
+
+
+    $("contactPhone2")
+      .href =
+      `tel:${phone2.replace(
+        /[^\d+]/g,
+        ""
+      )}`;
+
+
+    /* =====================================================
+       LOCATION
+    ===================================================== */
+
+    $("contactLocation")
+      .textContent =
+      content.contactLocation ||
+      DEFAULT_CONTENT.contactLocation;
+
+
+  } catch (error) {
+
+    console.error(
+      "CONTENT ERROR:",
+      error
+    );
 
   }
 
-  catch (error) {
+}
+
+
+/* =========================================================
+   PUBLIC COLLECTION LOADER
+========================================================= */
+
+async function getPublicCollection(
+  collectionName
+) {
+
+  const snap =
+    await getDocs(
+
+      collection(
+        db,
+        collectionName
+      )
+
+    );
+
+
+  return snap.docs
+
+    .map(
+      (documentSnapshot) => ({
+
+        id:
+          documentSnapshot.id,
+
+        ...documentSnapshot.data()
+
+      })
+
+    )
+
+    .sort(
+
+      (a, b) =>
+
+        (Number(
+          a.order
+        ) || 0)
+
+        -
+
+        (Number(
+          b.order
+        ) || 0)
+
+    );
+
+}
+
+
+/* =========================================================
+   EXPERIENCE
+========================================================= */
+
+async function loadExperience() {
+
+  const box =
+    $("experienceTimeline");
+
+
+  box.innerHTML =
+    "";
+
+
+  try {
+
+    const data =
+      await getPublicCollection(
+        "experiences"
+      );
+
+
+    if (
+      !data.length
+    ) {
+
+      box.innerHTML = `
+
+        <div class="empty dark-empty">
+
+          No experience has been added yet.
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    data.forEach(
+      (experience) => {
+
+        const article =
+          document.createElement(
+            "article"
+          );
+
+
+        article.innerHTML = `
+
+          <b>
+
+            ${escapeHTML(
+              formatPeriod(
+                experience.startDate,
+                experience.endDate
+              )
+            )}
+
+          </b>
+
+
+          <div>
+
+            <h3>
+
+              ${escapeHTML(
+                experience.company ||
+                ""
+              )}
+
+            </h3>
+
+
+            <p>
+
+              ${escapeHTML(
+                experience.role ||
+                ""
+              )}
+
+            </p>
+
+
+            ${
+              experience.description
+
+                ? `
+
+                  <div class="desc">
+
+                    ${escapeHTML(
+                      experience.description
+                    )}
+
+                  </div>
+
+                `
+
+                : ""
+            }
+
+
+            ${
+              Array.isArray(
+                experience.tags
+              )
+
+              &&
+
+              experience.tags.length
+
+                ? `
+
+                  <span class="tag-list">
+
+                    ${escapeHTML(
+                      experience.tags.join(
+                        " • "
+                      )
+                    )}
+
+                  </span>
+
+                `
+
+                : ""
+            }
+
+          </div>
+
+        `;
+
+
+        box.appendChild(
+          article
+        );
+
+      }
+    );
+
+
+  } catch (error) {
 
     console.error(
-      "PORTFOLIO LOAD ERROR:",
+      "EXPERIENCE ERROR:",
       error
     );
 
 
-    grid.innerHTML = `
+    box.innerHTML = `
 
-      <div class="empty-gallery">
+      <div class="empty dark-empty">
 
-        Unable to load portfolio.
+        Could not load experience.
 
       </div>
 
@@ -530,98 +815,462 @@ async function loadPortfolio() {
 
 
 /* =========================================================
-   GET CLIENT NAME
+   EDUCATION
 ========================================================= */
 
-function getClientName(
-  item
-) {
+async function loadEducation() {
 
-  const client =
-    String(
-      item.client || ""
-    ).trim();
+  const box =
+    $("educationCards");
 
 
-  if (!client) {
+  box.innerHTML =
+    "";
 
-    return "Other / Unassigned";
+
+  try {
+
+    const data =
+      await getPublicCollection(
+        "education"
+      );
+
+
+    if (
+      !data.length
+    ) {
+
+      box.innerHTML = `
+
+        <div class="empty">
+
+          No education has been added yet.
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    data.forEach(
+      (entry) => {
+
+        const card =
+          document.createElement(
+            "div"
+          );
+
+
+        card.innerHTML = `
+
+          <small>
+
+            ${escapeHTML(
+              entry.section ||
+              "EDUCATION"
+            )}
+
+          </small>
+
+
+          <h3>
+
+            ${escapeHTML(
+              entry.institution ||
+              ""
+            )}
+
+          </h3>
+
+
+          <p>
+
+            ${escapeHTML(
+              entry.degree ||
+              ""
+            )}
+
+          </p>
+
+
+          ${
+            entry.description
+
+              ? `
+
+                <p>
+
+                  ${escapeHTML(
+                    entry.description
+                  )}
+
+                </p>
+
+              `
+
+              : ""
+          }
+
+
+          ${
+            entry.date
+
+              ? `
+
+                <b>
+
+                  ${escapeHTML(
+                    entry.date
+                  )}
+
+                </b>
+
+              `
+
+              : ""
+          }
+
+        `;
+
+
+        box.appendChild(
+          card
+        );
+
+      }
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "EDUCATION ERROR:",
+      error
+    );
+
+
+    box.innerHTML = `
+
+      <div class="empty">
+
+        Could not load education.
+
+      </div>
+
+    `;
 
   }
-
-
-  return client;
 
 }
 
 
 /* =========================================================
-   GET SECTION NAME
+   SKILLS
 ========================================================= */
 
-function getSectionName(
-  item
-) {
+async function loadSkills() {
 
-  const category =
-    String(
-      item.category || ""
-    ).trim();
+  const box =
+    $("skillsList");
 
 
-  if (!category) {
+  box.innerHTML =
+    "";
 
-    return "Other";
+
+  try {
+
+    const data =
+      await getPublicCollection(
+        "skills"
+      );
+
+
+    if (
+      !data.length
+    ) {
+
+      box.innerHTML = `
+
+        <span class="skill-pill">
+
+          No skills added yet.
+
+        </span>
+
+      `;
+
+      return;
+
+    }
+
+
+    data.forEach(
+      (skill) => {
+
+        const pill =
+          document.createElement(
+            "span"
+          );
+
+
+        pill.className =
+          "skill-pill";
+
+
+        pill.textContent =
+
+          skill.level
+
+            ? `${skill.name} — ${skill.level}`
+
+            : skill.name ||
+              "";
+
+
+        box.appendChild(
+          pill
+        );
+
+      }
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "SKILLS ERROR:",
+      error
+    );
+
+
+    box.innerHTML = `
+
+      <span class="skill-pill">
+
+        Could not load skills.
+
+      </span>
+
+    `;
 
   }
-
-
-  return category;
 
 }
 
 
 /* =========================================================
-   BUILD CLIENT FILTER
+   WORK
 ========================================================= */
 
-function buildClientFilters() {
+async function loadWork() {
 
-  const bar =
-    $("categoryBar");
+  try {
+
+    const snap =
+      await getDocs(
+
+        query(
+
+          collection(
+            db,
+            "portfolioItems"
+          ),
+
+          where(
+            "published",
+            "==",
+            true
+          )
+
+        )
+
+      );
 
 
-  if (!bar) {
-    return;
+    allItems =
+      snap.docs
+
+        .map(
+          (documentSnapshot) => ({
+
+            id:
+              documentSnapshot.id,
+
+            ...documentSnapshot.data()
+
+          })
+
+        )
+
+        .sort(
+
+          (a, b) =>
+
+            (Number(
+              a.order
+            ) || 0)
+
+            -
+
+            (Number(
+              b.order
+            ) || 0)
+
+        );
+
+
+    buildFilters();
+
+    renderWork();
+
+    renderFeatured();
+
+
+  } catch (error) {
+
+    console.error(
+      "WORK ERROR:",
+      error
+    );
+
+
+    $("workGroups").innerHTML = `
+
+      <div class="empty">
+
+        Could not load published work.
+
+      </div>
+
+    `;
+
   }
 
+}
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+function buildFilters() {
 
   const clients =
 
     [
-
       ...new Set(
 
-        allItems.map(
-          (item) =>
-            getClientName(item)
-        )
+        allItems
+
+          .map(
+            (item) =>
+              item.client
+          )
+
+          .filter(Boolean)
 
       )
 
-    ]
-
-    .sort(
+    ].sort(
       (a, b) =>
-        a.localeCompare(b)
+        a.localeCompare(
+          b
+        )
     );
 
 
-  bar.innerHTML =
+  const categories =
+
+    [
+      ...new Set(
+
+        allItems
+
+          .map(
+            (item) =>
+              item.category
+          )
+
+          .filter(Boolean)
+
+      )
+
+    ].sort(
+      (a, b) =>
+        a.localeCompare(
+          b
+        )
+    );
+
+
+  renderFilterButtons(
+
+    $("clientFilters"),
+
+    clients,
+
+    clientFilter,
+
+    (value) => {
+
+      clientFilter =
+        value;
+
+
+      buildFilters();
+
+      renderWork();
+
+      renderFeatured();
+
+    }
+
+  );
+
+
+  renderFilterButtons(
+
+    $("categoryFilters"),
+
+    categories,
+
+    categoryFilter,
+
+    (value) => {
+
+      categoryFilter =
+        value;
+
+
+      buildFilters();
+
+      renderWork();
+
+      renderFeatured();
+
+    }
+
+  );
+
+}
+
+
+function renderFilterButtons(
+
+  target,
+  values,
+  selected,
+  callback
+
+) {
+
+  target.innerHTML =
     "";
 
-
-  /* ALL */
 
   const allButton =
     document.createElement(
@@ -629,50 +1278,37 @@ function buildClientFilters() {
     );
 
 
-  allButton.className =
-    "category-btn";
-
-
-  if (
-    selectedClient ===
-    "all"
-  ) {
-
-    allButton.classList.add(
-      "active"
-    );
-
-  }
+  allButton.type =
+    "button";
 
 
   allButton.textContent =
-    "All Clients";
+    "All";
+
+
+  allButton.className =
+
+    selected === "all"
+      ? "active"
+      : "";
 
 
   allButton.addEventListener(
     "click",
-    () => {
-
-      selectedClient =
-        "all";
-
-      buildClientFilters();
-
-      renderPortfolio();
-
-    }
+    () =>
+      callback(
+        "all"
+      )
   );
 
 
-  bar.appendChild(
+  target.appendChild(
     allButton
   );
 
 
-  /* CLIENT BUTTONS */
-
-  clients.forEach(
-    (client) => {
+  values.forEach(
+    (value) => {
 
       const button =
         document.createElement(
@@ -680,42 +1316,31 @@ function buildClientFilters() {
         );
 
 
-      button.className =
-        "category-btn";
-
-
-      if (
-        selectedClient ===
-        client
-      ) {
-
-        button.classList.add(
-          "active"
-        );
-
-      }
+      button.type =
+        "button";
 
 
       button.textContent =
-        client;
+        value;
+
+
+      button.className =
+
+        selected === value
+          ? "active"
+          : "";
 
 
       button.addEventListener(
         "click",
-        () => {
-
-          selectedClient =
-            client;
-
-          buildClientFilters();
-
-          renderPortfolio();
-
-        }
+        () =>
+          callback(
+            value
+          )
       );
 
 
-      bar.appendChild(
+      target.appendChild(
         button
       );
 
@@ -725,119 +1350,118 @@ function buildClientFilters() {
 }
 
 
+function getFilteredItems() {
+
+  return allItems.filter(
+
+    (item) =>
+
+      (
+
+        clientFilter ===
+        "all"
+
+        ||
+
+        item.client ===
+        clientFilter
+
+      )
+
+      &&
+
+      (
+
+        categoryFilter ===
+        "all"
+
+        ||
+
+        item.category ===
+        categoryFilter
+
+      )
+
+  );
+
+}
+
+
 /* =========================================================
-   CREATE MEDIA CARD
+   MEDIA CARD
 ========================================================= */
 
 function createMediaCard(
-  item,
-  index
+  item
 ) {
 
-  const card =
+  const button =
     document.createElement(
       "button"
     );
 
 
-  card.type =
+  button.type =
     "button";
 
 
-  card.className =
+  button.className =
     "media-card";
 
 
-  /* =======================================================
-     MEDIA
-  ======================================================= */
+  const media =
+
+    item.type ===
+    "video"
+
+      ? document.createElement(
+          "video"
+        )
+
+      : document.createElement(
+          "img"
+        );
+
+
+  media.src =
+    item.url;
+
+
+  media.className =
+    "media-visual";
+
 
   if (
     item.type ===
     "video"
   ) {
 
-    const video =
-      document.createElement(
-        "video"
-      );
-
-
-    video.src =
-      item.url;
-
-
-    /*
-       PUBLIC GALLERY:
-
-       No autoplay
-       No loop
-    */
-
-    video.autoplay =
-      false;
-
-    video.loop =
-      false;
-
-    video.muted =
+    media.muted =
       true;
 
-    video.controls =
-      false;
-
-    video.playsInline =
+    media.playsInline =
       true;
 
-    video.preload =
+    media.preload =
       "metadata";
 
+    media.autoplay =
+      false;
 
-    video.className =
-      "media-visual";
+    media.loop =
+      false;
 
+  } else {
 
-    card.appendChild(
-      video
-    );
-
-  }
-
-  else {
-
-    const image =
-      document.createElement(
-        "img"
-      );
-
-
-    image.src =
-      item.url;
-
-
-    image.alt =
+    media.alt =
       item.title ||
       "Portfolio work";
 
-
-    image.loading =
+    media.loading =
       "lazy";
-
-
-    image.className =
-      "media-visual";
-
-
-    card.appendChild(
-      image
-    );
 
   }
 
-
-  /* =======================================================
-     OVERLAY
-  ======================================================= */
 
   const overlay =
     document.createElement(
@@ -846,62 +1470,42 @@ function createMediaCard(
 
 
   overlay.className =
-    "media-overlay";
+    "card-overlay";
 
 
-  const title =
-    item.title ||
-    "Selected Work";
+  const meta =
 
+    [
 
-  const section =
-    getSectionName(
-      item
-    );
+      item.client,
 
+      item.category
 
-  const client =
-    getClientName(
-      item
-    );
+    ]
+
+      .filter(Boolean)
+
+      .join(
+        " • "
+      );
 
 
   overlay.innerHTML = `
 
-    <span class="card-number">
-
-      ${String(
-        index + 1
-      ).padStart(
-        2,
-        "0"
-      )}
-
-    </span>
-
-
     <strong>
 
       ${escapeHTML(
-        title
+        item.title ||
+        "Selected Work"
       )}
 
     </strong>
 
 
-    <i>
-      ↗
-    </i>
-
-
     <small>
 
       ${escapeHTML(
-        client
-      )}
-      •
-      ${escapeHTML(
-        section
+        meta
       )}
 
     </small>
@@ -909,361 +1513,122 @@ function createMediaCard(
   `;
 
 
-  card.appendChild(
+  button.append(
+    media,
     overlay
   );
 
 
-  card.addEventListener(
+  button.addEventListener(
     "click",
-    () => {
-
+    () =>
       openMedia(
         item
-      );
-
-    }
+      )
   );
 
 
-  return card;
+  return button;
 
 }
 
 
 /* =========================================================
-   GROUP ITEMS BY CLIENT
+   GROUP BY CLIENT -> SECTION
 ========================================================= */
 
 function groupByClient(
-  items
+  list
 ) {
 
-  const clients = {};
+  const groups =
+    new Map();
 
 
-  items.forEach(
+  list.forEach(
     (item) => {
 
       const client =
-        getClientName(
-          item
+        item.client ||
+        "Other";
+
+
+      const category =
+        item.category ||
+        "Other";
+
+
+      if (
+        !groups.has(
+          client
+        )
+      ) {
+
+        groups.set(
+          client,
+          new Map()
         );
-
-
-      if (!clients[client]) {
-
-        clients[client] =
-          [];
 
       }
 
 
-      clients[client].push(
-        item
-      );
-
-    }
-  );
-
-
-  return clients;
-
-}
-
-
-/* =========================================================
-   GROUP ITEMS BY SECTION
-========================================================= */
-
-function groupBySection(
-  items
-) {
-
-  const sections = {};
-
-
-  items.forEach(
-    (item) => {
-
-      const section =
-        getSectionName(
-          item
-        );
-
-
-      if (!sections[section]) {
-
-        sections[section] =
-          [];
-
-      }
-
-
-      sections[section].push(
-        item
-      );
-
-    }
-  );
-
-
-  return sections;
-
-}
-
-
-/* =========================================================
-   CREATE COMPANY BLOCK
-========================================================= */
-
-function createClientBlock(
-  client,
-  clientItems
-) {
-
-  const clientBlock =
-    document.createElement(
-      "section"
-    );
-
-
-  clientBlock.className =
-    "client-group";
-
-
-  /* =======================================================
-     COMPANY HEADER
-  ======================================================= */
-
-  const clientHeader =
-    document.createElement(
-      "div"
-    );
-
-
-  clientHeader.className =
-    "client-header";
-
-
-  const title =
-    document.createElement(
-      "h3"
-    );
-
-
-  title.textContent =
-    client;
-
-
-  const count =
-    document.createElement(
-      "span"
-    );
-
-
-  count.textContent =
-
-    `${clientItems.length} ${
-      clientItems.length === 1
-        ? "project"
-        : "projects"
-    }`;
-
-
-  clientHeader.append(
-    title,
-    count
-  );
-
-
-  clientBlock.appendChild(
-    clientHeader
-  );
-
-
-  /* =======================================================
-     SECTIONS INSIDE COMPANY
-  ======================================================= */
-
-  const sections =
-    groupBySection(
-      clientItems
-    );
-
-
-  const orderedSections =
-
-    Object.entries(
-      sections
-    )
-
-
-    .sort(
-      ([a], [b]) =>
-        a.localeCompare(b)
-    );
-
-
-  orderedSections.forEach(
-    ([sectionName, sectionItems]) => {
-
-
-      const sectionBlock =
-        document.createElement(
-          "div"
-        );
-
-
-      sectionBlock.className =
-        "work-section";
-
-
-      /* SECTION TITLE */
-
-      const sectionHeading =
-        document.createElement(
-          "div"
-        );
-
-
-      sectionHeading.className =
-        "work-section-heading";
-
-
-      const sectionTitle =
-        document.createElement(
-          "h4"
-        );
-
-
-      sectionTitle.textContent =
-        sectionName;
-
-
-      const sectionCount =
-        document.createElement(
-          "span"
-        );
-
-
-      sectionCount.textContent =
-        `${sectionItems.length} ${
-          sectionItems.length === 1
-            ? "item"
-            : "items"
-        }`;
-
-
-      sectionHeading.append(
-        sectionTitle,
-        sectionCount
-      );
-
-
-      sectionBlock.appendChild(
-        sectionHeading
-      );
-
-
-      /* SECTION GRID */
-
-      const sectionGrid =
-        document.createElement(
-          "div"
-        );
-
-
-      sectionGrid.className =
-        "section-media-grid";
-
-
-      sectionItems.forEach(
-        (item, index) => {
-
-          sectionGrid.appendChild(
-
-            createMediaCard(
-              item,
-              index
-            )
-
+      if (
+        !groups
+          .get(client)
+          .has(category)
+      ) {
+
+        groups
+          .get(client)
+          .set(
+            category,
+            []
           );
 
-        }
-      );
+      }
 
 
-      sectionBlock.appendChild(
-        sectionGrid
-      );
-
-
-      clientBlock.appendChild(
-        sectionBlock
-      );
+      groups
+        .get(client)
+        .get(category)
+        .push(
+          item
+        );
 
     }
   );
 
 
-  return clientBlock;
+  return groups;
 
 }
 
 
 /* =========================================================
-   RENDER PORTFOLIO
+   RENDER WORK
 ========================================================= */
 
-function renderPortfolio() {
+function renderWork() {
 
-  const grid =
-    $("mediaGrid");
-
-
-  if (!grid) {
-    return;
-  }
+  const root =
+    $("workGroups");
 
 
-  grid.innerHTML =
+  root.innerHTML =
     "";
 
 
-  let filteredItems;
+  const list =
+    getFilteredItems();
 
 
-  if (
-    selectedClient ===
-    "all"
-  ) {
+  if (!list.length) {
 
-    filteredItems =
-      allItems;
+    root.innerHTML = `
 
-  }
+      <div class="empty">
 
-  else {
-
-    filteredItems =
-
-      allItems.filter(
-        (item) =>
-          getClientName(item) ===
-          selectedClient
-      );
-
-  }
-
-
-  if (!filteredItems.length) {
-
-    grid.innerHTML = `
-
-      <div class="empty-gallery">
-
-        No published work in this selection yet.
+        No published work in the selected filters yet.
 
       </div>
 
@@ -1274,35 +1639,121 @@ function renderPortfolio() {
   }
 
 
-  const grouped =
+  const groups =
     groupByClient(
-      filteredItems
+      list
     );
 
 
-  const orderedClients =
+  groups.forEach(
 
-    Object.entries(
-      grouped
-    )
+    (
+      sections,
+      client
+    ) => {
+
+      const clientBlock =
+        document.createElement(
+          "div"
+        );
 
 
-    .sort(
-      ([a], [b]) =>
-        a.localeCompare(b)
-    );
+      clientBlock.className =
+        "client-group";
 
 
-  orderedClients.forEach(
-    ([client, clientItems]) => {
+      const title =
+        document.createElement(
+          "h3"
+        );
 
-      grid.appendChild(
 
-        createClientBlock(
-          client,
-          clientItems
-        )
+      title.innerHTML =
 
+        `${escapeHTML(
+          client
+        )}
+
+        <em>
+          — work
+        </em>`;
+
+
+      clientBlock.appendChild(
+        title
+      );
+
+
+      sections.forEach(
+
+        (
+          sectionItems,
+          category
+        ) => {
+
+          const section =
+            document.createElement(
+              "div"
+            );
+
+
+          section.className =
+            "work-section";
+
+
+          const heading =
+            document.createElement(
+              "h4"
+            );
+
+
+          heading.textContent =
+            category;
+
+
+          section.appendChild(
+            heading
+          );
+
+
+          const grid =
+            document.createElement(
+              "div"
+            );
+
+
+          grid.className =
+            "media-grid compact-grid";
+
+
+          sectionItems.forEach(
+            (item) => {
+
+              grid.appendChild(
+                createMediaCard(
+                  item
+                )
+              );
+
+            }
+          );
+
+
+          section.appendChild(
+            grid
+          );
+
+
+          clientBlock.appendChild(
+            section
+          );
+
+        }
+      );
+
+
+      root.appendChild(
+        clientBlock
       );
 
     }
@@ -1312,72 +1763,66 @@ function renderPortfolio() {
 
 
 /* =========================================================
-   FEATURED WORK
+   FEATURED
 ========================================================= */
 
 function renderFeatured() {
 
   const section =
-    $("featuredSection");
+    $("featured");
 
 
   const grid =
     $("featuredGrid");
 
 
-  if (
-    !section ||
-    !grid
-  ) {
-    return;
-  }
+  const list =
 
-
-  const featuredItems =
-
-    allItems
+    getFilteredItems()
 
       .filter(
         (item) =>
-          item.featured === true
+          item.featured ===
+          true
       )
 
       .slice(
         0,
-        6
+        8
       );
-
-
-  if (!featuredItems.length) {
-
-    section.classList.add(
-      "hidden"
-    );
-
-    return;
-
-  }
-
-
-  section.classList.remove(
-    "hidden"
-  );
 
 
   grid.innerHTML =
     "";
 
 
-  featuredItems.forEach(
-    (item, index) => {
+  if (!list.length) {
+
+    section
+      .classList
+      .add(
+        "hidden"
+      );
+
+    return;
+
+  }
+
+
+  section
+    .classList
+    .remove(
+      "hidden"
+    );
+
+
+  list.forEach(
+    (item) => {
 
       grid.appendChild(
-
         createMediaCard(
-          item,
-          index
+          item
         )
-
       );
 
     }
@@ -1387,215 +1832,138 @@ function renderFeatured() {
 
 
 /* =========================================================
-   OPEN MEDIA
+   MEDIA MODAL
 ========================================================= */
 
 function openMedia(
   item
 ) {
 
-  const modal =
-    $("mediaModal");
+  $("mediaContent")
+    .replaceChildren();
 
 
-  const content =
-    $("modalContent");
+  const media =
+
+    item.type ===
+    "video"
+
+      ? document.createElement(
+          "video"
+        )
+
+      : document.createElement(
+          "img"
+        );
 
 
-  const caption =
-    $("modalCaption");
+  media.src =
+    item.url;
 
-
-  if (
-    !modal ||
-    !content
-  ) {
-    return;
-  }
-
-
-  content.innerHTML =
-    "";
-
-
-  /* =======================================================
-     VIDEO
-  ======================================================= */
 
   if (
     item.type ===
     "video"
   ) {
 
-    const video =
-      document.createElement(
-        "video"
-      );
-
-
-    video.src =
-      item.url;
-
-
-    video.controls =
+    media.controls =
       true;
 
-
-    /*
-       Plays once.
-       NEVER loops.
-    */
-
-    video.autoplay =
+    media.autoplay =
       true;
 
-    video.loop =
+    media.playsInline =
+      true;
+
+    media.loop =
       false;
 
-    video.playsInline =
-      true;
 
-    video.preload =
-      "metadata";
-
-
-    video.addEventListener(
+    media.addEventListener(
       "ended",
       () => {
 
-        video.pause();
+        media.pause();
 
       }
     );
 
+  } else {
 
-    content.appendChild(
-      video
-    );
-
-  }
-
-  /* =======================================================
-     IMAGE
-  ======================================================= */
-
-  else {
-
-    const image =
-      document.createElement(
-        "img"
-      );
-
-
-    image.src =
-      item.url;
-
-
-    image.alt =
+    media.alt =
       item.title ||
       "Portfolio work";
 
+  }
 
-    content.appendChild(
-      image
+
+  $("mediaContent")
+    .appendChild(
+      media
     );
 
-  }
+
+  $("mediaCaption")
+    .textContent =
+
+      [
+
+        item.title,
+
+        item.client,
+
+        item.category,
+
+        item.description
+
+      ]
+
+        .filter(Boolean)
+
+        .join(
+          " • "
+        );
 
 
-  /* =======================================================
-     CAPTION
-  ======================================================= */
-
-  if (caption) {
-
-    const title =
-      item.title ||
-      "Selected Work";
-
-
-    const client =
-      getClientName(
-        item
-      );
-
-
-    const section =
-      getSectionName(
-        item
-      );
-
-
-    caption.innerHTML = `
-
-      <strong>
-
-        ${escapeHTML(
-          title
-        )}
-
-      </strong>
-
-
-      <span>
-
-        ${escapeHTML(
-          client
-        )}
-
-        • 
-
-        ${escapeHTML(
-          section
-        )}
-
-      </span>
-
-    `;
-
-  }
-
-
-  modal.classList.add(
-    "active"
-  );
-
-
-  modal.setAttribute(
-    "aria-hidden",
-    "false"
-  );
-
-
-  document.body.style.overflow =
-    "hidden";
+  $("mediaModal")
+    .classList
+    .add(
+      "active"
+    );
 
 }
 
 
-/* =========================================================
-   CLOSE MEDIA
-========================================================= */
+$("mediaClose").addEventListener(
+  "click",
+  closeMedia
+);
+
+
+$("mediaModal").addEventListener(
+  "click",
+  (event) => {
+
+    if (
+      event.target ===
+      $("mediaModal")
+    ) {
+
+      closeMedia();
+
+    }
+
+  }
+);
+
 
 function closeMedia() {
 
-  const modal =
-    $("mediaModal");
-
-
-  const content =
-    $("modalContent");
-
-
-  if (!modal) {
-    return;
-  }
-
-
   const video =
-    content?.querySelector(
-      "video"
-    );
+    $("mediaContent")
+      .querySelector(
+        "video"
+      );
 
 
   if (video) {
@@ -1608,94 +1976,57 @@ function closeMedia() {
   }
 
 
-  modal.classList.remove(
-    "active"
-  );
+  $("mediaModal")
+    .classList
+    .remove(
+      "active"
+    );
 
 
-  modal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-
-  if (content) {
-
-    content.innerHTML =
-      "";
-
-  }
-
-
-  document.body.style.overflow =
-    "";
+  $("mediaContent")
+    .replaceChildren();
 
 }
 
 
-$("modalClose")
-  ?.addEventListener(
-    "click",
-    closeMedia
-  );
-
-
-$("mediaModal")
-  ?.addEventListener(
-    "click",
-    (event) => {
-
-      if (
-        event.target ===
-        $("mediaModal")
-      ) {
-
-        closeMedia();
-
-      }
-
-    }
-  );
-
-
 /* =========================================================
-   ESC
+   HELPERS
 ========================================================= */
 
-document.addEventListener(
-  "keydown",
-  (event) => {
+function formatPeriod(
+  start,
+  end
+) {
 
-    if (
-      event.key ===
-      "Escape"
-    ) {
+  return [
 
-      closeAuth();
+    start,
 
-      closeMedia();
+    end ||
+    "Present"
 
-    }
+  ]
 
-  }
-);
+    .filter(Boolean)
 
+    .join(
+      " — "
+    );
 
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
+}
+
 
 function escapeHTML(
   value
 ) {
 
   return String(
-    value
-  )
+    value ?? ""
+  ).replace(
 
-  .replace(
     /[&<>"']/g,
-    (character) => ({
+
+    (char) => ({
 
       "&":
         "&amp;",
@@ -1712,16 +2043,29 @@ function escapeHTML(
       "'":
         "&#039;"
 
-    }[character])
+    }[char])
+
   );
 
 }
 
 
 /* =========================================================
-   START
+   INITIAL LOAD
 ========================================================= */
 
-loadProfile();
+await Promise.allSettled([
 
-loadPortfolio();
+  loadProfile(),
+
+  loadContent(),
+
+  loadExperience(),
+
+  loadEducation(),
+
+  loadSkills(),
+
+  loadWork()
+
+]);
