@@ -56,7 +56,11 @@ button{
 }
 
 .logo{
-  font:700 2rem 'Cormorant Garamond',serif;
+  font:
+    700
+    2rem
+    'Cormorant Garamond',
+    serif;
 }
 
 .logo span{
@@ -98,7 +102,8 @@ button{
   font-size:.62rem;
 
   box-shadow:
-    0 8px 30px #2f252718;
+    0 8px 30px
+    #2f252718;
 }
 
 
@@ -133,7 +138,10 @@ button{
 }
 
 .eyebrow{
-  margin:0 0 14px;
+  margin:
+    0
+    0
+    14px;
 
   color:#925965;
 
@@ -207,7 +215,9 @@ button{
 
   align-items:center;
 
-  padding:14px 20px;
+  padding:
+    14px
+    20px;
 
   border-radius:999px;
 
@@ -231,7 +241,11 @@ button{
 
 .profile-box{
 
-  width:min(100%,500px);
+  width:
+    min(
+      100%,
+      500px
+    );
 
   aspect-ratio:.78;
 
@@ -246,9 +260,12 @@ button{
   background:#ffffff92;
 
   box-shadow:
-    0 30px 80px #3a252b18;
+    0 30px
+    80px
+    #3a252b18;
 
-  transform:rotate(2deg);
+  transform:
+    rotate(2deg);
 
 }
 
@@ -428,7 +445,9 @@ button{
 
   display:grid;
 
-  grid-template-columns:190px 1fr;
+  grid-template-columns:
+    190px
+    1fr;
 
   gap:35px;
 
@@ -701,6 +720,30 @@ button{
 
 }
 
+.media-count{
+
+  display:inline-flex;
+
+  margin-top:8px;
+
+  padding:
+    5px
+    8px;
+
+  border-radius:999px;
+
+  background:#ffffff1c;
+
+  border:
+    1px solid
+    #ffffff2b;
+
+  color:#fff;
+
+  font-size:.56rem;
+
+}
+
 .client-group{
 
   margin:
@@ -918,11 +961,6 @@ button{
 
 }
 
-
-/* =========================================================
-   CLICKABLE PHONE NUMBERS
-========================================================= */
-
 .contact-details{
 
   margin-top:28px;
@@ -987,7 +1025,7 @@ footer{
 
 
 /* =========================================================
-   MODALS
+   GENERAL MODAL
 ========================================================= */
 
 .overlay{
@@ -1031,7 +1069,7 @@ footer{
 }
 
 .auth-card>button,
-#mediaClose{
+.modal-close{
 
   position:absolute;
 
@@ -1120,6 +1158,11 @@ footer{
 
 }
 
+
+/* =========================================================
+   MULTI MEDIA GALLERY
+========================================================= */
+
 .media-overlay{
 
   position:fixed;
@@ -1134,18 +1177,34 @@ footer{
 
 }
 
+.modal-content{
+
+  width:100%;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+}
+
 .modal-content img,
 .modal-content video{
 
   display:block;
 
-  max-width:94vw;
+  max-width:
+    82vw;
 
-  max-height:78vh;
+  max-height:
+    75vh;
 
   margin:auto;
 
   border-radius:16px;
+
+  object-fit:contain;
 
 }
 
@@ -1163,6 +1222,72 @@ footer{
   font-size:.72rem;
 
   line-height:1.7;
+
+}
+
+.media-counter{
+
+  margin-top:12px;
+
+  color:#d7c8cc;
+
+  font-size:.65rem;
+
+  letter-spacing:.1em;
+
+}
+
+.gallery-arrow{
+
+  position:absolute;
+
+  top:50%;
+
+  z-index:5;
+
+  width:54px;
+
+  height:54px;
+
+  margin-top:-27px;
+
+  border:
+    1px solid
+    #ffffff26;
+
+  border-radius:50%;
+
+  background:#ffffff12;
+
+  color:#fff;
+
+  font-size:2.3rem;
+
+  line-height:1;
+
+  display:grid;
+
+  place-items:center;
+
+  backdrop-filter:blur(10px);
+
+}
+
+.gallery-arrow:hover{
+
+  background:#ffffff22;
+
+}
+
+.gallery-prev{
+
+  left:30px;
+
+}
+
+.gallery-next{
+
+  right:30px;
 
 }
 
@@ -1209,7 +1334,6 @@ footer{
   }
 
 }
-
 
 @media(max-width:900px){
 
@@ -1305,8 +1429,34 @@ footer{
 
   }
 
-}
 
+  .gallery-prev{
+
+    left:10px;
+
+  }
+
+
+  .gallery-next{
+
+    right:10px;
+
+  }
+
+
+  .gallery-arrow{
+
+    width:44px;
+
+    height:44px;
+
+    margin-top:-22px;
+
+    font-size:1.9rem;
+
+  }
+
+}
 
 @media(max-width:600px){
 
@@ -1382,6 +1532,18 @@ footer{
   .contact-details > span{
 
     display:none;
+
+  }
+
+
+  .modal-content img,
+  .modal-content video{
+
+    max-width:
+      84vw;
+
+    max-height:
+      68vh;
 
   }
 
