@@ -27,7 +27,7 @@
 
   <link
     rel="preconnect"
-    href="https://fonts.gstatic.com"
+    href="https://fonts.googleapis.com"
     crossorigin
   >
 
@@ -40,7 +40,7 @@
 
   <link
     rel="stylesheet"
-    href="style.css?v=5"
+    href="style.css?v=6"
   >
 
 </head>
@@ -350,14 +350,9 @@
       <div id="workGroups">
 
         <div
-          id="mediaGrid"
-          class="media-grid compact-grid"
+          class="empty"
         >
-
-          <div class="empty">
-            Loading work...
-          </div>
-
+          Loading work...
         </div>
 
       </div>
@@ -457,40 +452,46 @@
       </a>
 
 
-      <!-- CLICKABLE PHONE NUMBERS -->
+      <div
+        id="contactDetails"
+        class="contact-details"
+      >
 
-     <div
-  id="contactDetails"
-  class="contact-details"
->
+        <a
+          id="contactPhone1"
+          href="tel:+201102048078"
+        >
+          +20 110 204 8078
+        </a>
 
-  <a
-    id="contactPhone1"
-    href="https://wa.me/201102048078"
-    target="_blank"
-    rel="noopener"
-  >
-    +20 110 204 8078
-  </a>
 
-  <span>•</span>
+        <span>
+          •
+        </span>
 
-  <a
-    id="contactPhone2"
-    href="https://wa.me/201067623833"
-    target="_blank"
-    rel="noopener"
-  >
-    +20 106 762 3833
-  </a>
 
-  <span>•</span>
+        <a
+          id="contactPhone2"
+          href="tel:+201067623833"
+        >
+          +20 106 762 3833
+        </a>
 
-  <span id="contactLocation">
-    El Shorouk City, Cairo, Egypt
-  </span>
 
-</div>
+        <span>
+          •
+        </span>
+
+
+        <span id="contactLocation">
+          El Shorouk City, Cairo, Egypt
+        </span>
+
+      </div>
+
+    </section>
+
+  </main>
 
 
   <!-- ADMIN LOGIN MODAL -->
@@ -568,7 +569,7 @@
   </div>
 
 
-  <!-- MEDIA MODAL -->
+  <!-- MULTI MEDIA MODAL -->
 
   <div
     id="mediaModal"
@@ -579,8 +580,19 @@
       id="mediaClose"
       type="button"
       aria-label="Close"
+      class="modal-close"
     >
       ×
+    </button>
+
+
+    <button
+      id="mediaPrev"
+      type="button"
+      class="gallery-arrow gallery-prev"
+      aria-label="Previous media"
+    >
+      ‹
     </button>
 
 
@@ -592,12 +604,30 @@
       ></div>
 
 
+      <div
+        id="mediaCounter"
+        class="media-counter"
+      >
+        1 / 1
+      </div>
+
+
       <p
         id="mediaCaption"
         class="modal-caption"
       ></p>
 
     </div>
+
+
+    <button
+      id="mediaNext"
+      type="button"
+      class="gallery-arrow gallery-next"
+      aria-label="Next media"
+    >
+      ›
+    </button>
 
   </div>
 
@@ -613,7 +643,7 @@
 
   <script
     type="module"
-    src="script.js?v=5"
+    src="script.js?v=6"
   ></script>
 
 </body>
