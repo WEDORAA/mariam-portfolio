@@ -14,9 +14,10 @@
     Mariam Portfolio | Admin
   </title>
 
+
   <link
     rel="stylesheet"
-    href="admin.css?v=4"
+    href="admin.css?v=6"
   >
 
 </head>
@@ -28,6 +29,7 @@
 
 
     <!-- SIDEBAR -->
+
     <aside>
 
       <a
@@ -100,10 +102,12 @@
 
 
     <!-- MAIN -->
+
     <main>
 
 
       <!-- HEADER -->
+
       <header>
 
         <div>
@@ -129,6 +133,7 @@
 
 
       <!-- OVERVIEW -->
+
       <section
         id="overview"
       >
@@ -142,8 +147,8 @@
 
 
           <button
-            type="button"
             class="stat-card"
+            type="button"
             data-jump="#items"
           >
 
@@ -159,8 +164,8 @@
 
 
           <button
-            type="button"
             class="stat-card"
+            type="button"
             data-jump="#items"
           >
 
@@ -176,8 +181,8 @@
 
 
           <button
-            type="button"
             class="stat-card"
+            type="button"
             data-jump="#items"
           >
 
@@ -193,8 +198,8 @@
 
 
           <button
-            type="button"
             class="stat-card"
+            type="button"
             data-jump="#items"
           >
 
@@ -210,8 +215,8 @@
 
 
           <button
-            type="button"
             class="stat-card"
+            type="button"
             data-jump="#experience"
           >
 
@@ -227,8 +232,8 @@
 
 
           <button
-            type="button"
             class="stat-card"
+            type="button"
             data-jump="#education"
           >
 
@@ -242,13 +247,13 @@
 
           </button>
 
-
         </div>
 
       </section>
 
 
-      <!-- ADD NEW WORK -->
+      <!-- ADD WORK -->
+
       <section
         id="upload"
       >
@@ -266,6 +271,8 @@
           >
 
 
+            <!-- MEDIA UPLOAD -->
+
             <div class="uploads">
 
 
@@ -274,14 +281,16 @@
                 id="imageBtn"
               >
 
-                ＋
+                <span class="upload-icon">
+                  ＋
+                </span>
 
                 <strong>
-                  Upload Image
+                  Add Images
                 </strong>
 
                 <small>
-                  JPG / JPEG / PNG / WebP
+                  Select multiple images at once
                 </small>
 
               </button>
@@ -292,14 +301,16 @@
                 id="videoBtn"
               >
 
-                ▶
+                <span class="upload-icon">
+                  ▶
+                </span>
 
                 <strong>
-                  Upload Video
+                  Add Videos
                 </strong>
 
                 <small>
-                  MP4 / MOV / WebM / M4V
+                  Select multiple videos at once
                 </small>
 
               </button>
@@ -308,34 +319,52 @@
             </div>
 
 
+            <!-- HIDDEN INPUTS -->
+
+            <input
+              id="imageInput"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              hidden
+            >
+
+
+            <input
+              id="videoInput"
+              type="file"
+              accept="video/mp4,video/quicktime,video/webm,video/x-m4v"
+              multiple
+              hidden
+            >
+
+
+            <!-- MEDIA STAGING -->
+
             <div
-              id="preview"
-              class="preview hidden"
-            ></div>
-
-
-            <input
-              type="hidden"
-              id="url"
+              id="mediaManager"
+              class="media-manager hidden"
             >
 
+              <div class="media-manager-head">
 
-            <input
-              type="hidden"
-              id="publicId"
-            >
+                <strong>
+                  Post Media
+                </strong>
+
+                <span id="mediaCount">
+                  0 items
+                </span>
+
+              </div>
 
 
-            <input
-              type="hidden"
-              id="type"
-            >
+              <div
+                id="mediaPreview"
+                class="media-preview"
+              ></div>
 
-
-            <input
-              type="hidden"
-              id="deleteToken"
-            >
+            </div>
 
 
             <input
@@ -351,7 +380,7 @@
               <input
                 id="title"
                 required
-                placeholder="Example: Ramadan Campaign"
+                placeholder="Example: Summer Campaign"
               >
 
             </label>
@@ -370,8 +399,8 @@
 
 
                 <button
-                  class="add-option"
                   id="addCategoryBtn"
+                  class="add-option"
                   type="button"
                 >
                   + Add section
@@ -395,8 +424,8 @@
 
 
                 <button
-                  class="add-option"
                   id="addClientBtn"
+                  class="add-option"
                   type="button"
                 >
                   + Add client
@@ -452,8 +481,8 @@
             <div class="actions">
 
               <button
-                class="primary"
                 id="save"
+                class="primary"
                 type="submit"
               >
                 Save & Publish
@@ -461,8 +490,8 @@
 
 
               <button
-                class="secondary hidden"
                 id="cancel"
+                class="secondary hidden"
                 type="button"
               >
                 Cancel Edit
@@ -480,32 +509,35 @@
           <div class="tips">
 
             <h3>
-              How it works
+              One Post — Multiple Media
             </h3>
 
 
             <p>
-              Upload the media first.
+              You can now select many images and videos
+              for the same work.
             </p>
 
 
             <p>
-              Choose the Client and Work Type.
+              Example:
+              ONE CLINICS → Reels → one post with
+              3 images + 2 videos.
             </p>
 
 
             <p>
-              Featured Work also appears in Featured.
+              The public website will show one card,
+              then open all media in a gallery.
             </p>
 
 
             <p>
-              Publish Now controls public visibility.
+              You can also edit the post later and
+              add or remove media.
             </p>
-
 
           </div>
-
 
         </div>
 
@@ -513,6 +545,7 @@
 
 
       <!-- EXPERIENCE -->
+
       <section
         id="experience"
       >
@@ -557,6 +590,7 @@
           <div class="two-col">
 
             <label>
+
               Company
 
               <input
@@ -568,6 +602,7 @@
 
 
             <label>
+
               Position / Role
 
               <input
@@ -579,6 +614,7 @@
 
 
             <label>
+
               Start Date
 
               <input
@@ -591,6 +627,7 @@
 
 
             <label>
+
               End Date
 
               <input
@@ -610,7 +647,6 @@
             <textarea
               id="experienceDescription"
               rows="4"
-              placeholder="Describe the role and responsibilities..."
             ></textarea>
 
           </label>
@@ -635,8 +671,8 @@
           <div class="actions">
 
             <button
-              class="primary"
               id="saveExperience"
+              class="primary"
               type="submit"
             >
               Save Experience
@@ -644,8 +680,8 @@
 
 
             <button
-              class="secondary"
               id="cancelExperience"
+              class="secondary"
               type="button"
             >
               Cancel
@@ -668,6 +704,7 @@
 
 
       <!-- EDUCATION -->
+
       <section
         id="education"
       >
@@ -775,8 +812,8 @@
           <div class="actions">
 
             <button
-              class="primary"
               id="saveEducation"
+              class="primary"
               type="submit"
             >
               Save Education
@@ -784,8 +821,8 @@
 
 
             <button
-              class="secondary"
               id="cancelEducation"
+              class="secondary"
               type="button"
             >
               Cancel
@@ -808,6 +845,7 @@
 
 
       <!-- SKILLS -->
+
       <section
         id="skills"
       >
@@ -881,8 +919,8 @@
           <div class="actions">
 
             <button
-              class="primary"
               id="saveSkill"
+              class="primary"
               type="submit"
             >
               Save Skill
@@ -890,8 +928,8 @@
 
 
             <button
-              class="secondary"
               id="cancelSkill"
+              class="secondary"
               type="button"
             >
               Cancel
@@ -914,6 +952,7 @@
 
 
       <!-- MANAGE WORK -->
+
       <section
         id="items"
       >
@@ -927,7 +966,7 @@
             </h2>
 
             <p class="section-note">
-              Edit or remove portfolio work.
+              Edit or remove portfolio posts.
             </p>
 
           </div>
@@ -952,6 +991,7 @@
 
 
       <!-- PROFILE -->
+
       <section
         id="profile"
       >
@@ -992,6 +1032,7 @@
 
 
       <!-- SITE CONTENT -->
+
       <section
         id="content"
       >
@@ -1017,7 +1058,6 @@
           id="contentForm"
           class="management-form"
         >
-
 
           <div class="two-col">
 
@@ -1165,8 +1205,8 @@
 
 
           <button
-            class="primary"
             id="saveContent"
+            class="primary"
             type="submit"
           >
             Save Site Content
@@ -1186,6 +1226,7 @@
 
 
   <!-- DELETE MODAL -->
+
   <div
     id="confirm"
     class="overlay"
@@ -1231,8 +1272,9 @@
 
   <script
     type="module"
-    src="admin.js?v=4"
+    src="admin.js?v=6"
   ></script>
 
 </body>
+
 </html>
