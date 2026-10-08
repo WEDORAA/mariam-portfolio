@@ -108,6 +108,13 @@ let categoryFilter =
   "all";
 
 
+let modalItem =
+  null;
+
+let modalIndex =
+  0;
+
+
 /* =========================================================
    YEAR
 ========================================================= */
@@ -160,7 +167,7 @@ document
 
 
 /* =========================================================
-   ADMIN MODAL
+   ADMIN LOGIN MODAL
 ========================================================= */
 
 $("adminEntry").addEventListener(
@@ -213,7 +220,7 @@ $("authModal").addEventListener(
 
 
 /* =========================================================
-   ADMIN LOGIN
+   LOGIN
 ========================================================= */
 
 $("loginForm").addEventListener(
@@ -223,7 +230,8 @@ $("loginForm").addEventListener(
     event.preventDefault();
 
 
-    $("loginMessage").textContent =
+    $("loginMessage")
+      .textContent =
       "Signing in...";
 
 
@@ -296,7 +304,7 @@ $("loginForm").addEventListener(
 
 
 /* =========================================================
-   STYLED HEADING
+   HEADING STYLE
 ========================================================= */
 
 function setStyledText(
@@ -353,11 +361,9 @@ function setStyledText(
     )}
 
     <em>
-
       ${escapeHTML(
         last
       )}
-
     </em>`;
 
 }
@@ -510,10 +516,6 @@ async function loadContent() {
     );
 
 
-    /* =====================================================
-       EMAIL
-    ===================================================== */
-
     const email =
       content.contactEmail ||
       DEFAULT_CONTENT.contactEmail;
@@ -528,10 +530,6 @@ async function loadContent() {
       .href =
       `mailto:${email}`;
 
-
-    /* =====================================================
-       PHONE 1
-    ===================================================== */
 
     const phone1 =
       content.contactPhone1 ||
@@ -551,10 +549,6 @@ async function loadContent() {
       )}`;
 
 
-    /* =====================================================
-       PHONE 2
-    ===================================================== */
-
     const phone2 =
       content.contactPhone2 ||
       DEFAULT_CONTENT.contactPhone2;
@@ -572,10 +566,6 @@ async function loadContent() {
         ""
       )}`;
 
-
-    /* =====================================================
-       LOCATION
-    ===================================================== */
 
     $("contactLocation")
       .textContent =
@@ -596,7 +586,7 @@ async function loadContent() {
 
 
 /* =========================================================
-   PUBLIC COLLECTION LOADER
+   GENERIC COLLECTION
 ========================================================= */
 
 async function getPublicCollection(
@@ -1063,6 +1053,89 @@ async function loadSkills() {
 
 
 /* =========================================================
+   NORMALIZE MEDIA
+   Supports both:
+   - new media[]
+   - old url/type fields
+========================================================= */
+
+function normalizeMedia(
+  item
+) {
+
+  if (
+    Array.isArray(
+      item.media
+    )
+
+    &&
+
+    item.media.length
+  ) {
+
+    return item.media
+
+      .filter(
+        (media) =>
+          media &&
+          media.url
+      )
+
+      .map(
+        (media) => ({
+
+          url:
+            media.url,
+
+          type:
+            media.type === "video"
+              ? "video"
+              : "image",
+
+          publicId:
+            media.publicId ||
+            ""
+
+        })
+
+      );
+
+  }
+
+
+  if (
+    item.url
+  ) {
+
+    return [
+
+      {
+
+        url:
+          item.url,
+
+        type:
+          item.type === "video"
+            ? "video"
+            : "image",
+
+        publicId:
+          item.publicId ||
+          ""
+
+      }
+
+    ];
+
+  }
+
+
+  return [];
+
+}
+
+
+/* =========================================================
    WORK
 ========================================================= */
 
@@ -1395,6 +1468,12 @@ function createMediaCard(
   item
 ) {
 
+  const media =
+    normalizeMedia(
+      item
+    );
+
+
   const button =
     document.createElement(
       "button"
@@ -1409,10 +1488,20 @@ function createMediaCard(
     "media-card";
 
 
-  const media =
+  const first =
+    media[0];
 
-    item.type ===
-    "video"
+
+  if (!first) {
+
+    return button;
+
+  }
+
+
+  const visual =
+
+    first.type === "video"
 
       ? document.createElement(
           "video"
@@ -1423,41 +1512,41 @@ function createMediaCard(
         );
 
 
-  media.src =
-    item.url;
+  visual.src =
+    first.url;
 
 
-  media.className =
+  visual.className =
     "media-visual";
 
 
   if (
-    item.type ===
+    first.type ===
     "video"
   ) {
 
-    media.muted =
+    visual.muted =
       true;
 
-    media.playsInline =
+    visual.playsInline =
       true;
 
-    media.preload =
+    visual.preload =
       "metadata";
 
-    media.autoplay =
+    visual.autoplay =
       false;
 
-    media.loop =
+    visual.loop =
       false;
 
   } else {
 
-    media.alt =
+    visual.alt =
       item.title ||
       "Portfolio work";
 
-    media.loading =
+    visual.loading =
       "lazy";
 
   }
@@ -1510,11 +1599,29 @@ function createMediaCard(
 
     </small>
 
+
+    ${
+      media.length > 1
+
+        ? `
+
+          <span class="media-count">
+
+            ${media.length} media
+
+          </span>
+
+        `
+
+        : ""
+
+    }
+
   `;
 
 
   button.append(
-    media,
+    visual,
     overlay
   );
 
@@ -1534,7 +1641,7 @@ function createMediaCard(
 
 
 /* =========================================================
-   GROUP BY CLIENT -> SECTION
+   GROUP CLIENT -> SECTION
 ========================================================= */
 
 function groupByClient(
@@ -1782,8 +1889,7 @@ function renderFeatured() {
 
       .filter(
         (item) =>
-          item.featured ===
-          true
+          item.featured === true
       )
 
       .slice(
@@ -1832,20 +1938,86 @@ function renderFeatured() {
 
 
 /* =========================================================
-   MEDIA MODAL
+   OPEN MULTI MEDIA GALLERY
 ========================================================= */
 
 function openMedia(
   item
 ) {
 
+  modalItem =
+    item;
+
+
+  modalIndex =
+    0;
+
+
+  $("mediaModal")
+    .classList
+    .add(
+      "active"
+    );
+
+
+  renderModalMedia();
+
+}
+
+
+/* =========================================================
+   RENDER CURRENT MEDIA
+========================================================= */
+
+function renderModalMedia() {
+
+  if (!modalItem)
+    return;
+
+
+  const media =
+    normalizeMedia(
+      modalItem
+    );
+
+
+  if (!media.length)
+    return;
+
+
+  if (
+    modalIndex < 0
+  ) {
+
+    modalIndex =
+      media.length - 1;
+
+  }
+
+
+  if (
+    modalIndex >= media.length
+  ) {
+
+    modalIndex =
+      0;
+
+  }
+
+
+  const current =
+    media[
+      modalIndex
+    ];
+
+
   $("mediaContent")
     .replaceChildren();
 
 
-  const media =
+  const element =
 
-    item.type ===
+    current.type ===
     "video"
 
       ? document.createElement(
@@ -1857,50 +2029,56 @@ function openMedia(
         );
 
 
-  media.src =
-    item.url;
+  element.src =
+    current.url;
 
 
   if (
-    item.type ===
+    current.type ===
     "video"
   ) {
 
-    media.controls =
+    element.controls =
       true;
 
-    media.autoplay =
+    element.autoplay =
       true;
 
-    media.playsInline =
-      true;
-
-    media.loop =
+    element.loop =
       false;
 
+    element.playsInline =
+      true;
 
-    media.addEventListener(
+
+    element.addEventListener(
       "ended",
       () => {
 
-        media.pause();
+        element.pause();
 
       }
     );
 
   } else {
 
-    media.alt =
-      item.title ||
-      "Portfolio work";
+    element.alt =
+      modalItem.title ||
+      "Portfolio media";
 
   }
 
 
   $("mediaContent")
     .appendChild(
-      media
+      element
     );
+
+
+  $("mediaCounter")
+    .textContent =
+
+    `${modalIndex + 1} / ${media.length}`;
 
 
   $("mediaCaption")
@@ -1908,13 +2086,13 @@ function openMedia(
 
       [
 
-        item.title,
+        modalItem.title,
 
-        item.client,
+        modalItem.client,
 
-        item.category,
+        modalItem.category,
 
-        item.description
+        modalItem.description
 
       ]
 
@@ -1925,14 +2103,91 @@ function openMedia(
         );
 
 
-  $("mediaModal")
-    .classList
-    .add(
-      "active"
+  $("mediaPrev")
+    .classList.toggle(
+      "hidden",
+      media.length <= 1
+    );
+
+
+  $("mediaNext")
+    .classList.toggle(
+      "hidden",
+      media.length <= 1
     );
 
 }
 
+
+/* =========================================================
+   NEXT / PREVIOUS
+========================================================= */
+
+$("mediaPrev").addEventListener(
+  "click",
+  (event) => {
+
+    event.stopPropagation();
+
+
+    if (!modalItem)
+      return;
+
+
+    const media =
+      normalizeMedia(
+        modalItem
+      );
+
+
+    if (
+      media.length <= 1
+    )
+      return;
+
+
+    modalIndex--;
+
+    renderModalMedia();
+
+  }
+);
+
+
+$("mediaNext").addEventListener(
+  "click",
+  (event) => {
+
+    event.stopPropagation();
+
+
+    if (!modalItem)
+      return;
+
+
+    const media =
+      normalizeMedia(
+        modalItem
+      );
+
+
+    if (
+      media.length <= 1
+    )
+      return;
+
+
+    modalIndex++;
+
+    renderModalMedia();
+
+  }
+);
+
+
+/* =========================================================
+   CLOSE GALLERY
+========================================================= */
 
 $("mediaClose").addEventListener(
   "click",
@@ -1976,6 +2231,14 @@ function closeMedia() {
   }
 
 
+  modalItem =
+    null;
+
+
+  modalIndex =
+    0;
+
+
   $("mediaModal")
     .classList
     .remove(
@@ -1987,6 +2250,129 @@ function closeMedia() {
     .replaceChildren();
 
 }
+
+
+/* =========================================================
+   KEYBOARD GALLERY
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  (event) => {
+
+    if (
+      !$("mediaModal")
+        .classList
+        .contains(
+          "active"
+        )
+    )
+      return;
+
+
+    if (
+      event.key ===
+      "ArrowRight"
+    ) {
+
+      $("mediaNext")
+        .click();
+
+    }
+
+
+    if (
+      event.key ===
+      "ArrowLeft"
+    ) {
+
+      $("mediaPrev")
+        .click();
+
+    }
+
+
+    if (
+      event.key ===
+      "Escape"
+    ) {
+
+      closeMedia();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   SWIPE ON MOBILE
+========================================================= */
+
+let touchStartX =
+  0;
+
+
+$("mediaModal")
+  .addEventListener(
+    "touchstart",
+    (event) => {
+
+      touchStartX =
+        event.changedTouches[0]
+          .screenX;
+
+    },
+    {
+      passive:
+        true
+    }
+  );
+
+
+$("mediaModal")
+  .addEventListener(
+    "touchend",
+    (event) => {
+
+      const touchEndX =
+        event.changedTouches[0]
+          .screenX;
+
+
+      const difference =
+        touchEndX -
+        touchStartX;
+
+
+      if (
+        Math.abs(
+          difference
+        ) < 50
+      )
+        return;
+
+
+      if (
+        difference < 0
+      ) {
+
+        $("mediaNext")
+          .click();
+
+      } else {
+
+        $("mediaPrev")
+          .click();
+
+      }
+
+    },
+    {
+      passive:
+        true
+    }
+  );
 
 
 /* =========================================================
