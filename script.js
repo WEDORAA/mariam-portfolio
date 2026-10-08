@@ -26,28 +26,17 @@ import {
 ========================================================= */
 
 const app =
-  initializeApp(
-    firebaseConfig
-  );
-
+  initializeApp(firebaseConfig);
 
 const auth =
-  getAuth(
-    app
-  );
-
+  getAuth(app);
 
 const db =
-  getFirestore(
-    app
-  );
-
+  getFirestore(app);
 
 const $ =
   (id) =>
-    document.getElementById(
-      id
-    );
+    document.getElementById(id);
 
 
 /* =========================================================
@@ -101,18 +90,608 @@ const DEFAULT_CONTENT = {
 
 let allItems = [];
 
-let clientFilter =
-  "all";
+let clientFilter = "all";
 
-let categoryFilter =
-  "all";
+let categoryFilter = "all";
+
+let modalItem = null;
+
+let modalIndex = 0;
 
 
-let modalItem =
-  null;
+/* =========================================================
+   VIDEO STATE
+========================================================= */
 
-let modalIndex =
-  0;
+/*
+  Becomes true after the visitor has interacted
+  with the website.
+
+  Clicking Work sets this to true.
+*/
+let userHasInteracted = false;
+
+
+/*
+  Videos currently managed by the observer.
+*/
+const autoplayVideos =
+  new Set();
+
+
+let videoObserver = null;
+
+
+/* =========================================================
+   REMEMBER USER INTERACTION
+========================================================= */
+
+function registerUserInteraction() {
+
+  userHasInteracted = true;
+
+}
+
+
+/* =========================================================
+   WORK NAV CLICK
+   The Work button is a deliberate user interaction.
+========================================================= */
+
+document
+  .querySelectorAll(
+    'a[href="#work"]'
+  )
+  .forEach(
+    (link) => {
+
+      link.addEventListener(
+        "click",
+        () => {
+
+          /*
+            IMPORTANT:
+            This happens directly inside the user's click.
+          */
+
+          registerUserInteraction();
+
+
+          /*
+            Give visible videos another chance
+            after Work becomes active.
+          */
+
+          setTimeout(
+            () => {
+
+              tryPlayVisibleVideosWithSound();
+
+            },
+            350
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+/* =========================================================
+   CREATE VIDEO OBSERVER
+========================================================= */
+
+function createVideoObserver() {
+
+  if (
+    !("IntersectionObserver" in window)
+  ) {
+
+    return null;
+
+  }
+
+
+  return new IntersectionObserver(
+
+    (entries) => {
+
+      entries.forEach(
+        (entry) => {
+
+          const video =
+            entry.target;
+
+
+          /*
+            VIDEO IS VISIBLE
+          */
+
+          if (
+
+            entry.isIntersecting &&
+
+            entry.intersectionRatio >=
+              0.55
+
+          ) {
+
+            /*
+              Don't restart a video that already ended.
+            */
+
+            if (
+              video.ended
+            ) {
+
+              return;
+
+            }
+
+
+            /*
+              Pause other videos.
+            */
+
+            autoplayVideos.forEach(
+              (otherVideo) => {
+
+                if (
+
+                  otherVideo !== video &&
+
+                  !otherVideo.paused
+
+                ) {
+
+                  otherVideo.pause();
+
+                }
+
+              }
+            );
+
+
+            autoplayVideos.add(
+              video
+            );
+
+
+            /*
+              If the user already interacted
+              with the website, try audible playback.
+            */
+
+            if (
+              userHasInteracted
+            ) {
+
+              playVideoWithSound(
+                video
+              );
+
+            } else {
+
+              /*
+                Before interaction, fallback to muted.
+              */
+
+              playVideoMuted(
+                video
+              );
+
+            }
+
+          } else {
+
+            /*
+              VIDEO IS OUTSIDE VIEWPORT
+            */
+
+            if (
+              !video.paused
+            ) {
+
+              video.pause();
+
+            }
+
+          }
+
+        }
+      );
+
+    },
+
+    {
+      threshold: [
+        0,
+        0.25,
+        0.55,
+        0.75,
+        1
+      ]
+    }
+
+  );
+
+}
+
+
+videoObserver =
+  createVideoObserver();
+
+
+/* =========================================================
+   OBSERVE VIDEO
+========================================================= */
+
+function observeVideo(
+  video
+) {
+
+  if (!video)
+    return;
+
+
+  video.playsInline =
+    true;
+
+
+  video.loop =
+    false;
+
+
+  video.autoplay =
+    false;
+
+
+  video.preload =
+    "metadata";
+
+
+  video.controls =
+    false;
+
+
+  video.setAttribute(
+    "playsinline",
+    ""
+  );
+
+
+  /*
+    Direct click on the video is also considered
+    an interaction.
+  */
+
+  video.addEventListener(
+    "click",
+    (event) => {
+
+      event.stopPropagation();
+
+
+      registerUserInteraction();
+
+
+      playVideoWithSound(
+        video
+      );
+
+    }
+  );
+
+
+  /*
+    Touch interaction on mobile.
+  */
+
+  video.addEventListener(
+    "touchend",
+    () => {
+
+      registerUserInteraction();
+
+
+      playVideoWithSound(
+        video
+      );
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  if (
+    videoObserver
+  ) {
+
+    videoObserver.observe(
+      video
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   PLAY WITH SOUND
+========================================================= */
+
+function playVideoWithSound(
+  video
+) {
+
+  if (!video)
+    return;
+
+
+  if (
+    video.ended
+  )
+    return;
+
+
+  /*
+    Stop the other feed videos.
+  */
+
+  autoplayVideos.forEach(
+    (otherVideo) => {
+
+      if (
+
+        otherVideo !== video &&
+
+        !otherVideo.paused
+
+      ) {
+
+        otherVideo.pause();
+
+      }
+
+    }
+  );
+
+
+  /*
+    Remove muted state.
+  */
+
+  video.muted =
+    false;
+
+  video.defaultMuted =
+    false;
+
+
+  video.removeAttribute(
+    "muted"
+  );
+
+
+  /*
+    Play with audio.
+  */
+
+  const promise =
+    video.play();
+
+
+  if (
+    promise &&
+    typeof promise.catch ===
+      "function"
+  ) {
+
+    promise.catch(
+      () => {
+
+        /*
+          Browser still blocked sound.
+
+          Safe fallback:
+          play muted.
+        */
+
+        playVideoMuted(
+          video
+        );
+
+      }
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   PLAY MUTED
+========================================================= */
+
+function playVideoMuted(
+  video
+) {
+
+  if (!video)
+    return;
+
+
+  if (
+    video.ended
+  )
+    return;
+
+
+  video.muted =
+    true;
+
+
+  video.defaultMuted =
+    true;
+
+
+  video.setAttribute(
+    "muted",
+    ""
+  );
+
+
+  const promise =
+    video.play();
+
+
+  if (
+    promise &&
+    typeof promise.catch ===
+      "function"
+  ) {
+
+    promise.catch(
+      () => {}
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   TRY VISIBLE VIDEOS WITH SOUND
+========================================================= */
+
+function tryPlayVisibleVideosWithSound() {
+
+  const videos =
+    document.querySelectorAll(
+      ".media-card video"
+    );
+
+
+  videos.forEach(
+    (video) => {
+
+      const rect =
+        video.getBoundingClientRect();
+
+
+      if (
+        rect.width <= 0 ||
+        rect.height <= 0
+      ) {
+
+        return;
+
+      }
+
+
+      const visibleTop =
+        Math.max(
+          rect.top,
+          0
+        );
+
+
+      const visibleBottom =
+        Math.min(
+          rect.bottom,
+          window.innerHeight
+        );
+
+
+      const visibleLeft =
+        Math.max(
+          rect.left,
+          0
+        );
+
+
+      const visibleRight =
+        Math.min(
+          rect.right,
+          window.innerWidth
+        );
+
+
+      const visibleWidth =
+        Math.max(
+          0,
+          visibleRight -
+          visibleLeft
+        );
+
+
+      const visibleHeight =
+        Math.max(
+          0,
+          visibleBottom -
+          visibleTop
+        );
+
+
+      const visibleArea =
+        visibleWidth *
+        visibleHeight;
+
+
+      const totalArea =
+        rect.width *
+        rect.height;
+
+
+      if (
+        totalArea <= 0
+      ) {
+
+        return;
+
+      }
+
+
+      const ratio =
+        visibleArea /
+        totalArea;
+
+
+      if (
+        ratio >= 0.55 &&
+        !video.ended
+      ) {
+
+        playVideoWithSound(
+          video
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   GENERAL PAGE INTERACTION
+========================================================= */
+
+document.addEventListener(
+  "pointerdown",
+  () => {
+
+    registerUserInteraction();
+
+  },
+  {
+    passive: true
+  }
+);
 
 
 /* =========================================================
@@ -131,6 +710,9 @@ $("year").textContent =
 $("menuToggle").addEventListener(
   "click",
   () => {
+
+    registerUserInteraction();
+
 
     $("navLinks")
       .classList
@@ -153,6 +735,9 @@ document
         "click",
         () => {
 
+          registerUserInteraction();
+
+
           $("navLinks")
             .classList
             .remove(
@@ -173,6 +758,9 @@ document
 $("adminEntry").addEventListener(
   "click",
   () => {
+
+    registerUserInteraction();
+
 
     $("authModal")
       .classList
@@ -228,6 +816,9 @@ $("loginForm").addEventListener(
   async (event) => {
 
     event.preventDefault();
+
+
+    registerUserInteraction();
 
 
     $("loginMessage")
@@ -586,7 +1177,7 @@ async function loadContent() {
 
 
 /* =========================================================
-   GENERIC COLLECTION
+   PUBLIC COLLECTION
 ========================================================= */
 
 async function getPublicCollection(
@@ -622,15 +1213,19 @@ async function getPublicCollection(
 
       (a, b) =>
 
-        (Number(
-          a.order
-        ) || 0)
+        (
+          Number(
+            a.order
+          ) || 0
+        )
 
         -
 
-        (Number(
-          b.order
-        ) || 0)
+        (
+          Number(
+            b.order
+          ) || 0
+        )
 
     );
 
@@ -746,9 +1341,7 @@ async function loadExperience() {
               Array.isArray(
                 experience.tags
               )
-
               &&
-
               experience.tags.length
 
                 ? `
@@ -1054,9 +1647,6 @@ async function loadSkills() {
 
 /* =========================================================
    NORMALIZE MEDIA
-   Supports both:
-   - new media[]
-   - old url/type fields
 ========================================================= */
 
 function normalizeMedia(
@@ -1064,6 +1654,7 @@ function normalizeMedia(
 ) {
 
   if (
+
     Array.isArray(
       item.media
     )
@@ -1071,6 +1662,7 @@ function normalizeMedia(
     &&
 
     item.media.length
+
   ) {
 
     return item.media
@@ -1088,8 +1680,11 @@ function normalizeMedia(
             media.url,
 
           type:
-            media.type === "video"
+            media.type ===
+            "video"
+
               ? "video"
+
               : "image",
 
           publicId:
@@ -1097,7 +1692,6 @@ function normalizeMedia(
             ""
 
         })
-
       );
 
   }
@@ -1115,8 +1709,11 @@ function normalizeMedia(
           item.url,
 
         type:
-          item.type === "video"
+          item.type ===
+          "video"
+
             ? "video"
+
             : "image",
 
         publicId:
@@ -1183,15 +1780,19 @@ async function loadWork() {
 
           (a, b) =>
 
-            (Number(
-              a.order
-            ) || 0)
+            (
+              Number(
+                a.order
+              ) || 0
+            )
 
             -
 
-            (Number(
-              b.order
-            ) || 0)
+            (
+              Number(
+                b.order
+              ) || 0
+            )
 
         );
 
@@ -1248,12 +1849,14 @@ function buildFilters() {
 
       )
 
-    ].sort(
-      (a, b) =>
-        a.localeCompare(
-          b
-        )
-    );
+    ]
+
+      .sort(
+        (a, b) =>
+          a.localeCompare(
+            b
+          )
+      );
 
 
   const categories =
@@ -1272,12 +1875,14 @@ function buildFilters() {
 
       )
 
-    ].sort(
-      (a, b) =>
-        a.localeCompare(
-          b
-        )
-    );
+    ]
+
+      .sort(
+        (a, b) =>
+          a.localeCompare(
+            b
+          )
+      );
 
 
   renderFilterButtons(
@@ -1289,6 +1894,9 @@ function buildFilters() {
     clientFilter,
 
     (value) => {
+
+      registerUserInteraction();
+
 
       clientFilter =
         value;
@@ -1315,6 +1923,9 @@ function buildFilters() {
 
     (value) => {
 
+      registerUserInteraction();
+
+
       categoryFilter =
         value;
 
@@ -1335,8 +1946,11 @@ function buildFilters() {
 function renderFilterButtons(
 
   target,
+
   values,
+
   selected,
+
   callback
 
 ) {
@@ -1362,7 +1976,9 @@ function renderFilterButtons(
   allButton.className =
 
     selected === "all"
+
       ? "active"
+
       : "";
 
 
@@ -1400,7 +2016,9 @@ function renderFilterButtons(
       button.className =
 
         selected === value
+
           ? "active"
+
           : "";
 
 
@@ -1461,7 +2079,7 @@ function getFilteredItems() {
 
 
 /* =========================================================
-   MEDIA CARD
+   POST CARD
 ========================================================= */
 
 function createMediaCard(
@@ -1488,66 +2106,203 @@ function createMediaCard(
     "media-card";
 
 
-  const first =
-    media[0];
-
-
-  if (!first) {
+  if (
+    !media.length
+  ) {
 
     return button;
 
   }
 
 
-  const visual =
+  const collage =
+    document.createElement(
+      "div"
+    );
 
-    first.type === "video"
 
-      ? document.createElement(
-          "video"
-        )
+  collage.className =
 
-      : document.createElement(
-          "img"
+    media.length === 1
+
+      ? "post-collage single-media"
+
+      : "post-collage multiple-media";
+
+
+  const visibleMedia =
+    media.slice(
+      0,
+      Math.min(
+        media.length,
+        4
+      )
+    );
+
+
+  visibleMedia.forEach(
+    (mediaItem) => {
+
+      const wrapper =
+        document.createElement(
+          "div"
         );
 
 
-  visual.src =
-    first.url;
+      wrapper.className =
+        "post-media-item";
 
 
-  visual.className =
-    "media-visual";
+      const visual =
+
+        mediaItem.type ===
+        "video"
+
+          ? document.createElement(
+              "video"
+            )
+
+          : document.createElement(
+              "img"
+            );
+
+
+      visual.src =
+        mediaItem.url;
+
+
+      visual.className =
+        "media-visual";
+
+
+      if (
+        mediaItem.type ===
+        "video"
+      ) {
+
+        visual.muted =
+          true;
+
+        visual.defaultMuted =
+          true;
+
+        visual.autoplay =
+          false;
+
+        visual.loop =
+          false;
+
+        visual.playsInline =
+          true;
+
+        visual.controls =
+          false;
+
+        visual.preload =
+          "metadata";
+
+
+        visual.setAttribute(
+          "muted",
+          ""
+        );
+
+
+        visual.setAttribute(
+          "playsinline",
+          ""
+        );
+
+
+        const soundHint =
+          document.createElement(
+            "span"
+          );
+
+
+        soundHint.className =
+          "video-sound-hint";
+
+
+        soundHint.textContent =
+          "🔊 Tap for sound";
+
+
+        wrapper.appendChild(
+          soundHint
+        );
+
+
+        observeVideo(
+          visual
+        );
+
+
+        wrapper.addEventListener(
+          "click",
+          (event) => {
+
+            event.stopPropagation();
+
+
+            registerUserInteraction();
+
+
+            playVideoWithSound(
+              visual
+            );
+
+          }
+        );
+
+      } else {
+
+        visual.alt =
+          item.title ||
+          "Portfolio work";
+
+
+        visual.loading =
+          "lazy";
+
+      }
+
+
+      wrapper.insertBefore(
+        visual,
+        wrapper.firstChild
+      );
+
+
+      collage.appendChild(
+        wrapper
+      );
+
+    }
+  );
 
 
   if (
-    first.type ===
-    "video"
+    media.length > 4
   ) {
 
-    visual.muted =
-      true;
+    const more =
+      document.createElement(
+        "div"
+      );
 
-    visual.playsInline =
-      true;
 
-    visual.preload =
-      "metadata";
+    more.className =
+      "more-media";
 
-    visual.autoplay =
-      false;
 
-    visual.loop =
-      false;
+    more.textContent =
+      `+${media.length - 4}`;
 
-  } else {
 
-    visual.alt =
-      item.title ||
-      "Portfolio work";
-
-    visual.loading =
-      "lazy";
+    collage.appendChild(
+      more
+    );
 
   }
 
@@ -1621,17 +2376,43 @@ function createMediaCard(
 
 
   button.append(
-    visual,
+    collage,
     overlay
   );
 
 
   button.addEventListener(
     "click",
-    () =>
+    (event) => {
+
+      registerUserInteraction();
+
+
+      const clickedVideo =
+        event.target.closest(
+          "video"
+        );
+
+
+      if (
+        clickedVideo
+      ) {
+
+        playVideoWithSound(
+          clickedVideo
+        );
+
+
+        return;
+
+      }
+
+
       openMedia(
         item
-      )
+      );
+
+    }
   );
 
 
@@ -1641,7 +2422,7 @@ function createMediaCard(
 
 
 /* =========================================================
-   GROUP CLIENT -> SECTION
+   GROUP BY CLIENT
 ========================================================= */
 
 function groupByClient(
@@ -1680,9 +2461,11 @@ function groupByClient(
 
 
       if (
+
         !groups
           .get(client)
           .has(category)
+
       ) {
 
         groups
@@ -1729,7 +2512,9 @@ function renderWork() {
     getFilteredItems();
 
 
-  if (!list.length) {
+  if (
+    !list.length
+  ) {
 
     root.innerHTML = `
 
@@ -1889,7 +2674,8 @@ function renderFeatured() {
 
       .filter(
         (item) =>
-          item.featured === true
+          item.featured ===
+          true
       )
 
       .slice(
@@ -1902,7 +2688,9 @@ function renderFeatured() {
     "";
 
 
-  if (!list.length) {
+  if (
+    !list.length
+  ) {
 
     section
       .classList
@@ -1938,12 +2726,27 @@ function renderFeatured() {
 
 
 /* =========================================================
-   OPEN MULTI MEDIA GALLERY
+   OPEN GALLERY
 ========================================================= */
 
 function openMedia(
   item
 ) {
+
+  const media =
+    normalizeMedia(
+      item
+    );
+
+
+  if (
+    !media.length
+  )
+    return;
+
+
+  registerUserInteraction();
+
 
   modalItem =
     item;
@@ -1966,7 +2769,7 @@ function openMedia(
 
 
 /* =========================================================
-   RENDER CURRENT MEDIA
+   RENDER GALLERY MEDIA
 ========================================================= */
 
 function renderModalMedia() {
@@ -1981,7 +2784,9 @@ function renderModalMedia() {
     );
 
 
-  if (!media.length)
+  if (
+    !media.length
+  )
     return;
 
 
@@ -1990,13 +2795,15 @@ function renderModalMedia() {
   ) {
 
     modalIndex =
-      media.length - 1;
+      media.length -
+      1;
 
   }
 
 
   if (
-    modalIndex >= media.length
+    modalIndex >=
+    media.length
   ) {
 
     modalIndex =
@@ -2050,6 +2857,77 @@ function renderModalMedia() {
     element.playsInline =
       true;
 
+    element.preload =
+      "auto";
+
+
+    /*
+      Because the visitor clicked
+      before opening the gallery,
+      request sound immediately.
+    */
+
+    element.muted =
+      false;
+
+    element.defaultMuted =
+      false;
+
+
+    element.removeAttribute(
+      "muted"
+    );
+
+
+    element.setAttribute(
+      "playsinline",
+      ""
+    );
+
+
+    $("mediaContent")
+      .appendChild(
+        element
+      );
+
+
+    const promise =
+      element.play();
+
+
+    if (
+      promise &&
+      typeof promise.catch ===
+        "function"
+    ) {
+
+      promise.catch(
+        () => {
+
+          element.muted =
+            true;
+
+
+          element.defaultMuted =
+            true;
+
+
+          element.setAttribute(
+            "muted",
+            ""
+          );
+
+
+          element.play()
+            .catch(
+              () => {}
+            );
+
+        }
+      );
+
+    }
+
 
     element.addEventListener(
       "ended",
@@ -2066,13 +2944,13 @@ function renderModalMedia() {
       modalItem.title ||
       "Portfolio media";
 
+
+    $("mediaContent")
+      .appendChild(
+        element
+      );
+
   }
-
-
-  $("mediaContent")
-    .appendChild(
-      element
-    );
 
 
   $("mediaCounter")
@@ -2103,24 +2981,112 @@ function renderModalMedia() {
         );
 
 
+  const multiple =
+    media.length > 1;
+
+
   $("mediaPrev")
-    .classList.toggle(
+    .classList
+    .toggle(
       "hidden",
-      media.length <= 1
+      !multiple
     );
 
 
   $("mediaNext")
-    .classList.toggle(
+    .classList
+    .toggle(
       "hidden",
-      media.length <= 1
+      !multiple
     );
 
 }
 
 
 /* =========================================================
-   NEXT / PREVIOUS
+   NEXT MEDIA
+========================================================= */
+
+function nextMedia() {
+
+  if (!modalItem)
+    return;
+
+
+  const media =
+    normalizeMedia(
+      modalItem
+    );
+
+
+  if (
+    media.length <= 1
+  )
+    return;
+
+
+  modalIndex++;
+
+
+  if (
+    modalIndex >=
+    media.length
+  ) {
+
+    modalIndex =
+      0;
+
+  }
+
+
+  renderModalMedia();
+
+}
+
+
+/* =========================================================
+   PREVIOUS MEDIA
+========================================================= */
+
+function previousMedia() {
+
+  if (!modalItem)
+    return;
+
+
+  const media =
+    normalizeMedia(
+      modalItem
+    );
+
+
+  if (
+    media.length <= 1
+  )
+    return;
+
+
+  modalIndex--;
+
+
+  if (
+    modalIndex < 0
+  ) {
+
+    modalIndex =
+      media.length -
+      1;
+
+  }
+
+
+  renderModalMedia();
+
+}
+
+
+/* =========================================================
+   GALLERY BUTTONS
 ========================================================= */
 
 $("mediaPrev").addEventListener(
@@ -2129,26 +3095,9 @@ $("mediaPrev").addEventListener(
 
     event.stopPropagation();
 
+    registerUserInteraction();
 
-    if (!modalItem)
-      return;
-
-
-    const media =
-      normalizeMedia(
-        modalItem
-      );
-
-
-    if (
-      media.length <= 1
-    )
-      return;
-
-
-    modalIndex--;
-
-    renderModalMedia();
+    previousMedia();
 
   }
 );
@@ -2160,26 +3109,9 @@ $("mediaNext").addEventListener(
 
     event.stopPropagation();
 
+    registerUserInteraction();
 
-    if (!modalItem)
-      return;
-
-
-    const media =
-      normalizeMedia(
-        modalItem
-      );
-
-
-    if (
-      media.length <= 1
-    )
-      return;
-
-
-    modalIndex++;
-
-    renderModalMedia();
+    nextMedia();
 
   }
 );
@@ -2253,7 +3185,7 @@ function closeMedia() {
 
 
 /* =========================================================
-   KEYBOARD GALLERY
+   KEYBOARD
 ========================================================= */
 
 document.addEventListener(
@@ -2275,8 +3207,7 @@ document.addEventListener(
       "ArrowRight"
     ) {
 
-      $("mediaNext")
-        .click();
+      nextMedia();
 
     }
 
@@ -2286,8 +3217,7 @@ document.addEventListener(
       "ArrowLeft"
     ) {
 
-      $("mediaPrev")
-        .click();
+      previousMedia();
 
     }
 
@@ -2306,73 +3236,107 @@ document.addEventListener(
 
 
 /* =========================================================
-   SWIPE ON MOBILE
+   MOBILE SWIPE
 ========================================================= */
 
 let touchStartX =
   0;
 
+let touchStartY =
+  0;
 
-$("mediaModal")
-  .addEventListener(
-    "touchstart",
-    (event) => {
 
-      touchStartX =
-        event.changedTouches[0]
-          .screenX;
+$("mediaModal").addEventListener(
+  "touchstart",
+  (event) => {
 
-    },
-    {
-      passive:
-        true
+    if (
+      !event.changedTouches.length
+    )
+      return;
+
+
+    touchStartX =
+      event.changedTouches[0]
+        .clientX;
+
+
+    touchStartY =
+      event.changedTouches[0]
+        .clientY;
+
+  },
+  {
+    passive:
+      true
+  }
+);
+
+
+$("mediaModal").addEventListener(
+  "touchend",
+  (event) => {
+
+    if (
+      !event.changedTouches.length
+    )
+      return;
+
+
+    const touchEndX =
+      event.changedTouches[0]
+        .clientX;
+
+
+    const touchEndY =
+      event.changedTouches[0]
+        .clientY;
+
+
+    const deltaX =
+      touchEndX -
+      touchStartX;
+
+
+    const deltaY =
+      touchEndY -
+      touchStartY;
+
+
+    if (
+      Math.abs(deltaX) < 50
+    )
+      return;
+
+
+    if (
+      Math.abs(deltaX) <=
+      Math.abs(deltaY)
+    )
+      return;
+
+
+    registerUserInteraction();
+
+
+    if (
+      deltaX < 0
+    ) {
+
+      nextMedia();
+
+    } else {
+
+      previousMedia();
+
     }
-  );
 
-
-$("mediaModal")
-  .addEventListener(
-    "touchend",
-    (event) => {
-
-      const touchEndX =
-        event.changedTouches[0]
-          .screenX;
-
-
-      const difference =
-        touchEndX -
-        touchStartX;
-
-
-      if (
-        Math.abs(
-          difference
-        ) < 50
-      )
-        return;
-
-
-      if (
-        difference < 0
-      ) {
-
-        $("mediaNext")
-          .click();
-
-      } else {
-
-        $("mediaPrev")
-          .click();
-
-      }
-
-    },
-    {
-      passive:
-        true
-    }
-  );
+  },
+  {
+    passive:
+      true
+  }
+);
 
 
 /* =========================================================
@@ -2389,7 +3353,7 @@ function formatPeriod(
     start,
 
     end ||
-    "Present"
+      "Present"
 
   ]
 
