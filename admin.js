@@ -18,8 +18,13 @@ import {
   deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-import { firebaseConfig } from "./firebase-config.js";
-import { cloudinaryConfig } from "./cloudinary-config.js";
+import {
+  firebaseConfig
+} from "./firebase-config.js";
+
+import {
+  cloudinaryConfig
+} from "./cloudinary-config.js";
 
 
 /* =========================================================
@@ -27,17 +32,28 @@ import { cloudinaryConfig } from "./cloudinary-config.js";
 ========================================================= */
 
 const app =
-  initializeApp(firebaseConfig);
+  initializeApp(
+    firebaseConfig
+  );
+
 
 const auth =
-  getAuth(app);
+  getAuth(
+    app
+  );
+
 
 const db =
-  getFirestore(app);
+  getFirestore(
+    app
+  );
+
 
 const $ =
   (id) =>
-    document.getElementById(id);
+    document.getElementById(
+      id
+    );
 
 
 /* =========================================================
@@ -319,6 +335,8 @@ let skills = [];
 
 let deleteTarget = null;
 
+let stagedMedia = [];
+
 
 /* =========================================================
    AUTH GUARD
@@ -357,10 +375,14 @@ onAuthStateChanged(
         adminSnap.data()?.active !== true
       ) {
 
-        await signOut(auth);
+        await signOut(
+          auth
+        );
+
 
         location.href =
           "index.html";
+
 
         return;
 
@@ -371,16 +393,11 @@ onAuthStateChanged(
         currentUser;
 
 
-      $("adminEmail").textContent =
+      $("adminEmail")
+        .textContent =
         currentUser.email ||
         "Admin";
 
-
-      /*
-        Seed first.
-        Then load.
-        This avoids a race condition.
-      */
 
       await seedDefaultsIfEmpty();
 
@@ -420,7 +437,10 @@ $("logout").addEventListener(
   "click",
   async () => {
 
-    await signOut(auth);
+    await signOut(
+      auth
+    );
+
 
     location.href =
       "index.html";
@@ -430,7 +450,7 @@ $("logout").addEventListener(
 
 
 /* =========================================================
-   SEED DEFAULT DATA
+   SEED DEFAULTS
 ========================================================= */
 
 async function seedDefaultsIfEmpty() {
@@ -465,7 +485,9 @@ async function seedDefaultsIfEmpty() {
     );
 
 
-  if (!contentSnap.exists()) {
+  if (
+    !contentSnap.exists()
+  ) {
 
     await setDoc(
 
@@ -501,10 +523,12 @@ async function seedCollection(
 
   const snap =
     await getDocs(
+
       collection(
         db,
         collectionName
       )
+
     );
 
 
@@ -573,43 +597,135 @@ async function loadEverything() {
 
 function updateStats() {
 
-  $("total").textContent =
+  $("total")
+    .textContent =
     items.length;
 
 
-  $("pub").textContent =
+  $("pub")
+    .textContent =
+
     items.filter(
       (item) =>
         item.published === true
     ).length;
 
 
-  $("feat").textContent =
+  $("feat")
+    .textContent =
+
     items.filter(
       (item) =>
         item.featured === true
     ).length;
 
 
-  $("vid").textContent =
+  $("vid")
+    .textContent =
+
     items.filter(
       (item) =>
-        item.type === "video"
+        getMediaList(item)
+          .some(
+            (media) =>
+              media.type === "video"
+          )
     ).length;
 
 
-  $("expCount").textContent =
+  $("expCount")
+    .textContent =
     experiences.length;
 
 
-  $("eduCount").textContent =
+  $("eduCount")
+    .textContent =
     education.length;
 
 }
 
 
 /* =========================================================
-   WORK
+   WORK MEDIA NORMALIZER
+========================================================= */
+
+function getMediaList(
+  item
+) {
+
+  if (
+
+    Array.isArray(
+      item.media
+    ) &&
+
+    item.media.length
+
+  ) {
+
+    return item.media
+
+      .filter(
+        (media) =>
+          media &&
+          media.url
+      )
+
+      .map(
+        (media) => ({
+
+          url:
+            media.url,
+
+          type:
+            media.type === "video"
+              ? "video"
+              : "image",
+
+          publicId:
+            media.publicId ||
+            ""
+
+        })
+      );
+
+  }
+
+
+  if (
+    item.url
+  ) {
+
+    return [
+
+      {
+
+        url:
+          item.url,
+
+        type:
+          item.type === "video"
+            ? "video"
+            : "image",
+
+        publicId:
+          item.publicId ||
+          ""
+
+      }
+
+    ];
+
+  }
+
+
+  return [];
+
+}
+
+
+/* =========================================================
+   LOAD WORK
 ========================================================= */
 
 async function loadItems() {
@@ -625,27 +741,36 @@ async function loadItems() {
     );
 
 
-  items = snap.docs
+  items =
+    snap.docs
 
-    .map(
-      (d) => ({
+      .map(
+        (d) => ({
 
-        id:
-          d.id,
+          id:
+            d.id,
 
-        ...d.data()
+          ...d.data()
 
-      })
-    )
+        })
 
-    .sort(
+      )
 
-      (a, b) =>
+      .sort(
 
-        (Number(a.order) || 0) -
-        (Number(b.order) || 0)
+        (a, b) =>
 
-    );
+          (Number(
+            a.order
+          ) || 0)
+
+          -
+
+          (Number(
+            b.order
+          ) || 0)
+
+      );
 
 
   renderItems();
@@ -696,36 +821,60 @@ function renderItems() {
 
 
       const media =
-
-        item.type === "video"
-
-          ? document.createElement(
-              "video"
-            )
-
-          : document.createElement(
-              "img"
-            );
+        getMediaList(
+          item
+        );
 
 
-      media.src =
-        item.url;
+      const first =
+        media[0];
 
 
-      media.alt =
+      let visual;
+
+
+      if (
+        first?.type ===
+        "video"
+      ) {
+
+        visual =
+          document.createElement(
+            "video"
+          );
+
+      } else {
+
+        visual =
+          document.createElement(
+            "img"
+          );
+
+      }
+
+
+      if (first?.url) {
+
+        visual.src =
+          first.url;
+
+      }
+
+
+      visual.alt =
         item.title ||
         "Portfolio work";
 
 
-      media.muted =
+      visual.muted =
         true;
 
 
-      media.playsInline =
+      visual.playsInline =
         true;
 
 
-      media.preload =
+      visual.preload =
         "metadata";
 
 
@@ -733,6 +882,10 @@ function renderItems() {
         document.createElement(
           "div"
         );
+
+
+      info.className =
+        "row-info";
 
 
       info.innerHTML = `
@@ -752,33 +905,49 @@ function renderItems() {
           ${escapeHTML(
 
             [
+
               item.client,
+
               item.category
 
             ]
 
               .filter(Boolean)
 
-              .join(" • ")
+              .join(
+                " • "
+              )
 
           )}
 
         </small>
 
 
-        <span class="status ${
-          item.published === true
-            ? "status-good"
-            : "status-bad"
-        }">
+        <div class="row-meta">
 
-          ${
+          <span>
+
+            ${media.length}
+            media
+
+          </span>
+
+
+          <span class="status ${
             item.published === true
-              ? "Published"
-              : "Hidden"
-          }
+              ? "status-good"
+              : "status-bad"
+          }">
 
-        </span>
+            ${
+              item.published === true
+                ? "Published"
+                : "Hidden"
+            }
+
+          </span>
+
+        </div>
 
       `;
 
@@ -800,7 +969,9 @@ function renderItems() {
       edit.addEventListener(
         "click",
         () =>
-          editItem(item.id)
+          editItem(
+            item.id
+          )
       );
 
 
@@ -830,7 +1001,7 @@ function renderItems() {
 
       row.append(
 
-        media,
+        visual,
 
         info,
 
@@ -852,26 +1023,30 @@ function renderItems() {
 
 
 /* =========================================================
-   CLIENTS + CATEGORIES
+   TAXONOMY
 ========================================================= */
 
 async function loadTaxonomy() {
 
   const categorySnap =
     await getDocs(
+
       collection(
         db,
         "categories"
       )
+
     );
 
 
   const clientSnap =
     await getDocs(
+
       collection(
         db,
         "clients"
       )
+
     );
 
 
@@ -902,8 +1077,11 @@ async function loadTaxonomy() {
     $("category"),
 
     mergeUnique(
+
       DEFAULT_CATEGORIES,
+
       categories
+
     ),
 
     "Choose a section"
@@ -916,8 +1094,11 @@ async function loadTaxonomy() {
     $("client"),
 
     mergeUnique(
+
       DEFAULT_CLIENTS,
+
       clients
+
     ),
 
     "Choose a client / brand"
@@ -953,62 +1134,66 @@ function mergeUnique(
 
     )
 
-  ].sort(
-    (a, b) =>
-      a.localeCompare(b)
-  );
+  ]
+
+    .sort(
+      (a, b) =>
+        a.localeCompare(b)
+    );
 
 }
 
 
 function populateSelect(
+
   select,
   values,
   placeholder
+
 ) {
 
   select.innerHTML =
     "";
 
 
-  const empty =
+  const option =
     document.createElement(
       "option"
     );
 
 
-  empty.value =
+  option.value =
     "";
 
 
-  empty.textContent =
+  option.textContent =
     placeholder;
 
 
   select.appendChild(
-    empty
+    option
   );
 
 
   values.forEach(
     (value) => {
 
-      const option =
+      const item =
         document.createElement(
           "option"
         );
 
 
-      option.value =
+      item.value =
         value;
 
 
-      option.textContent =
+      item.textContent =
         value;
 
 
       select.appendChild(
-        option
+        item
       );
 
     }
@@ -1018,35 +1203,36 @@ function populateSelect(
 
 
 /* =========================================================
-   ADD CLIENT / SECTION
+   TAXONOMY ADD
 ========================================================= */
 
 async function addTaxonomy(
   type
 ) {
 
-  const isCategory =
-    type === "categories";
+  const category =
+    type ===
+    "categories";
 
 
   const label =
-    isCategory
+    category
       ? "section"
       : "client / brand";
 
 
-  const value =
+  const answer =
     prompt(
       `Add new ${label}:`
     );
 
 
-  if (!value)
+  if (!answer)
     return;
 
 
   const clean =
-    value.trim();
+    answer.trim();
 
 
   if (!clean)
@@ -1057,24 +1243,30 @@ async function addTaxonomy(
 
     const snap =
       await getDocs(
+
         collection(
           db,
           type
         )
+
       );
 
 
     const exists =
       snap.docs.some(
+
         (d) =>
 
           String(
-            d.data()?.name || ""
+            d.data()?.name ||
+            ""
           )
 
             .trim()
+
             .toLowerCase() ===
           clean.toLowerCase()
+
       );
 
 
@@ -1108,14 +1300,16 @@ async function addTaxonomy(
     await loadTaxonomy();
 
 
-    if (isCategory) {
+    if (category) {
 
-      $("category").value =
+      $("category")
+        .value =
         clean;
 
     } else {
 
-      $("client").value =
+      $("client")
+        .value =
         clean;
 
     }
@@ -1152,76 +1346,188 @@ $("addClientBtn").addEventListener(
 
 
 /* =========================================================
-   FILE PICKER
+   MULTIPLE FILE PICKING
 ========================================================= */
 
-function chooseFile(
+$("imageBtn").addEventListener(
+  "click",
+  () => {
+
+    $("imageInput")
+      .click();
+
+  }
+);
+
+
+$("videoBtn").addEventListener(
+  "click",
+  () => {
+
+    $("videoInput")
+      .click();
+
+  }
+);
+
+
+$("imageInput").addEventListener(
+  "change",
+  async () => {
+
+    const files =
+      Array.from(
+        $("imageInput").files ||
+        []
+      );
+
+
+    if (!files.length)
+      return;
+
+
+    await uploadMultiple(
+      files,
+      "image"
+    );
+
+
+    $("imageInput").value =
+      "";
+
+  }
+);
+
+
+$("videoInput").addEventListener(
+  "change",
+  async () => {
+
+    const files =
+      Array.from(
+        $("videoInput").files ||
+        []
+      );
+
+
+    if (!files.length)
+      return;
+
+
+    await uploadMultiple(
+      files,
+      "video"
+    );
+
+
+    $("videoInput").value =
+      "";
+
+  }
+);
+
+
+/* =========================================================
+   MULTIPLE UPLOAD
+========================================================= */
+
+async function uploadMultiple(
+  files,
   type
 ) {
 
-  return new Promise(
-    (resolve) => {
+  try {
 
-      const input =
-        document.createElement(
-          "input"
+    const total =
+      files.length;
+
+
+    for (
+      let index = 0;
+      index < total;
+      index++
+    ) {
+
+      const file =
+        files[index];
+
+
+      $("msg")
+        .textContent =
+
+        `Uploading ${type} ${index + 1} of ${total}...`;
+
+
+      const info =
+        await uploadDirect(
+
+          file,
+
+          type,
+
+          (percent) => {
+
+            $("msg")
+              .textContent =
+
+              `Uploading ${type} ${index + 1} of ${total} — ${percent}%`;
+
+          }
+
         );
 
 
-      input.type =
-        "file";
+      stagedMedia.push({
+
+        url:
+          info.secure_url,
+
+        type:
+          info.resource_type ===
+          "video"
+
+            ? "video"
+
+            : "image",
+
+        publicId:
+          info.public_id ||
+          ""
+
+      });
 
 
-      input.accept =
-
-        type === "video"
-
-          ? "video/mp4,video/quicktime,video/webm,video/x-m4v"
-
-          : "image/jpeg,image/png,image/webp";
-
-
-      input.style.display =
-        "none";
-
-
-      document.body.appendChild(
-        input
-      );
-
-
-      input.addEventListener(
-        "change",
-        () => {
-
-          const file =
-            input.files?.[0] ||
-            null;
-
-
-          input.remove();
-
-
-          resolve(file);
-
-        },
-        {
-          once:
-            true
-        }
-      );
-
-
-      input.click();
+      renderStagedMedia();
 
     }
-  );
+
+
+    $("msg")
+      .textContent =
+
+      `${files.length} ${type} file(s) added to this post.`;
+
+
+  } catch (error) {
+
+    console.error(
+      "MULTI UPLOAD ERROR:",
+      error
+    );
+
+
+    $("msg")
+      .textContent =
+      error.message ||
+      "Upload failed.";
+
+  }
 
 }
 
 
 /* =========================================================
-   CLOUDINARY UPLOAD
+   CLOUDINARY
 ========================================================= */
 
 async function uploadDirect(
@@ -1267,7 +1573,7 @@ async function uploadDirect(
   }
 
 
-  const allowedImageTypes = [
+  const imageTypes = [
 
     "image/jpeg",
 
@@ -1278,7 +1584,7 @@ async function uploadDirect(
   ];
 
 
-  const allowedVideoTypes = [
+  const videoTypes = [
 
     "video/mp4",
 
@@ -1295,7 +1601,7 @@ async function uploadDirect(
 
     type === "image" &&
 
-    !allowedImageTypes.includes(
+    !imageTypes.includes(
       file.type
     )
 
@@ -1312,7 +1618,7 @@ async function uploadDirect(
 
     type === "video" &&
 
-    !allowedVideoTypes.includes(
+    !videoTypes.includes(
       file.type
     )
 
@@ -1335,7 +1641,7 @@ async function uploadDirect(
   ) {
 
     throw new Error(
-      "Image must be 20 MB or smaller."
+      `${file.name} is larger than 20 MB.`
     );
 
   }
@@ -1351,7 +1657,7 @@ async function uploadDirect(
   ) {
 
     throw new Error(
-      "Video must be 95 MB or smaller."
+      `${file.name} is larger than 95 MB.`
     );
 
   }
@@ -1526,188 +1832,173 @@ async function uploadDirect(
 
 
 /* =========================================================
-   PREVIEW
+   RENDER STAGED MEDIA
 ========================================================= */
 
-function showPreview(
-  info
-) {
+function renderStagedMedia() {
 
-  $("preview")
-    .replaceChildren();
+  const manager =
+    $("mediaManager");
 
 
-  $("preview")
-    .classList
-    .remove("hidden");
+  const preview =
+    $("mediaPreview");
 
 
-  if (
-    info.resource_type ===
-    "video"
-  ) {
-
-    const video =
-      document.createElement(
-        "video"
-      );
+  const count =
+    $("mediaCount");
 
 
-    video.src =
-      info.secure_url;
-
-
-    video.controls =
-      true;
-
-
-    video.muted =
-      true;
-
-
-    video.playsInline =
-      true;
-
-
-    video.style.width =
-      "100%";
-
-
-    $("preview")
-      .appendChild(video);
-
-  } else {
-
-    const image =
-      document.createElement(
-        "img"
-      );
-
-
-    image.src =
-      info.secure_url;
-
-
-    image.alt =
-      "Preview";
-
-
-    $("preview")
-      .appendChild(image);
-
-  }
-
-}
-
-
-function setUpload(
-  info
-) {
-
-  $("url").value =
-    info.secure_url || "";
-
-
-  $("publicId").value =
-    info.public_id || "";
-
-
-  $("type").value =
-    info.resource_type ||
-    "image";
-
-
-  $("deleteToken").value =
-    info.delete_token ||
+  preview.innerHTML =
     "";
 
 
-  showPreview(
-    info
-  );
+  count.textContent =
+    `${stagedMedia.length} media`;
 
 
-  $("msg").textContent =
-    "Upload completed successfully. Add the details and save.";
+  if (!stagedMedia.length) {
 
-}
+    manager
+      .classList
+      .add(
+        "hidden"
+      );
 
+    return;
 
-/* =========================================================
-   UPLOAD BUTTONS
-========================================================= */
-
-$("imageBtn").addEventListener(
-  "click",
-  () =>
-    handleUpload(
-      "image"
-    )
-);
+  }
 
 
-$("videoBtn").addEventListener(
-  "click",
-  () =>
-    handleUpload(
-      "video"
-    )
-);
+  manager
+    .classList
+    .remove(
+      "hidden"
+    );
 
 
-async function handleUpload(
-  type
-) {
+  stagedMedia.forEach(
+    (media, index) => {
 
-  try {
-
-    const file =
-      await chooseFile(type);
-
-
-    if (!file)
-      return;
+      const card =
+        document.createElement(
+          "div"
+        );
 
 
-    $("msg").textContent =
-      "Uploading 0%...";
+      card.className =
+        "staged-media-item";
 
 
-    const info =
-      await uploadDirect(
+      const visual =
 
-        file,
+        media.type === "video"
 
-        type,
+          ? document.createElement(
+              "video"
+            )
 
-        (percent) => {
+          : document.createElement(
+              "img"
+            );
 
-          $("msg").textContent =
-            `Uploading ${percent}%...`;
+
+      visual.src =
+        media.url;
+
+
+      visual.muted =
+        true;
+
+
+      visual.playsInline =
+        true;
+
+
+      visual.preload =
+        "metadata";
+
+
+      if (
+        media.type ===
+        "video"
+      ) {
+
+        visual.controls =
+          true;
+
+      }
+
+
+      const number =
+        document.createElement(
+          "span"
+        );
+
+
+      number.className =
+        "staged-number";
+
+
+      number.textContent =
+        index + 1;
+
+
+      const remove =
+        document.createElement(
+          "button"
+        );
+
+
+      remove.type =
+        "button";
+
+
+      remove.className =
+        "staged-remove";
+
+
+      remove.textContent =
+        "×";
+
+
+      remove.title =
+        "Remove from this post";
+
+
+      remove.addEventListener(
+        "click",
+        () => {
+
+          stagedMedia.splice(
+            index,
+            1
+          );
+
+
+          renderStagedMedia();
 
         }
+      );
+
+
+      card.append(
+
+        visual,
+
+        number,
+
+        remove
 
       );
 
 
-    setUpload(
-      info
-    );
+      preview.appendChild(
+        card
+      );
 
-
-  } catch (error) {
-
-    console.error(
-      "UPLOAD ERROR:",
-      error
-    );
-
-
-    $("msg").textContent =
-      error.message ||
-      "Upload failed.";
-
-  }
+    }
+  );
 
 }
 
@@ -1729,19 +2020,12 @@ $("workForm").addEventListener(
         .trim();
 
 
-    const url =
-      $("url")
-        .value
-        .trim();
-
-
     if (
-      !editingId &&
-      !url
+      !stagedMedia.length
     ) {
 
       $("msg").textContent =
-        "Upload an image or video first.";
+        "Add at least one image or video.";
 
       return;
 
@@ -1778,6 +2062,13 @@ $("workForm").addEventListener(
         $("published")
           .checked,
 
+      media:
+        stagedMedia.map(
+          (media) => ({
+            ...media
+          })
+        ),
+
       updatedAt:
         Date.now()
 
@@ -1809,12 +2100,16 @@ $("workForm").addEventListener(
 
 
       $("msg").textContent =
-        "Saving...";
+        "Saving post...";
+
+
+      const firstMedia =
+        stagedMedia[0];
 
 
       if (!editingId) {
 
-        const nextOrder =
+        const order =
 
           items.length
 
@@ -1843,25 +2138,22 @@ $("workForm").addEventListener(
 
             ...payload,
 
-            url,
+            /*
+              Legacy fields kept so old versions
+              of the site remain compatible.
+            */
 
-            publicId:
-              $("publicId")
-                .value
-                .trim(),
+            url:
+              firstMedia.url,
 
             type:
-              $("type")
-                .value ||
-              "image",
+              firstMedia.type,
 
-            deleteToken:
-              $("deleteToken")
-                .value
-                .trim(),
+            publicId:
+              firstMedia.publicId ||
+              "",
 
-            order:
-              nextOrder,
+            order,
 
             createdAt:
               Date.now(),
@@ -1875,47 +2167,29 @@ $("workForm").addEventListener(
 
       } else {
 
-        const updateData = {
-          ...payload
-        };
-
-
-        if (url) {
-
-          updateData.url =
-            url;
-
-          updateData.publicId =
-            $("publicId")
-              .value
-              .trim();
-
-          updateData.type =
-            $("type")
-              .value ||
-            "image";
-
-          updateData.deleteToken =
-            $("deleteToken")
-              .value
-              .trim();
-
-        }
-
-
         await updateDoc(
 
           doc(
-
             db,
-
             "portfolioItems",
-
             editingId
-
           ),
 
-          updateData
+          {
+
+            ...payload,
+
+            url:
+              firstMedia.url,
+
+            type:
+              firstMedia.type,
+
+            publicId:
+              firstMedia.publicId ||
+              ""
+
+          }
 
         );
 
@@ -1929,7 +2203,7 @@ $("workForm").addEventListener(
 
 
       $("msg").textContent =
-        "Saved successfully.";
+        "Post saved successfully.";
 
 
     } catch (error) {
@@ -1942,7 +2216,7 @@ $("workForm").addEventListener(
 
       $("msg").textContent =
         error.message ||
-        "Could not save work.";
+        "Could not save post.";
 
     } finally {
 
@@ -1961,48 +2235,37 @@ $("workForm").addEventListener(
 
 function resetWorkForm() {
 
-  $("workForm").reset();
+  $("workForm")
+    .reset();
 
 
-  $("published").checked =
+  $("published")
+    .checked =
     true;
 
 
-  [
-    "url",
-    "publicId",
-    "type",
-    "deleteToken",
-    "editingId"
-  ].forEach(
-    (id) => {
-
-      $(id).value =
-        "";
-
-    }
-  );
+  $("editingId")
+    .value =
+    "";
 
 
-  $("preview")
-    .classList
-    .add("hidden");
+  stagedMedia =
+    [];
 
 
-  $("preview")
-    .replaceChildren();
+  renderStagedMedia();
 
 
-  $("save").textContent =
+  $("save")
+    .textContent =
     "Save & Publish";
 
 
   $("cancel")
     .classList
-    .add("hidden");
-
-
-  loadTaxonomy();
+    .add(
+      "hidden"
+    );
 
 }
 
@@ -2024,7 +2287,8 @@ function editItem(
   const item =
     items.find(
       (entry) =>
-        entry.id === id
+        entry.id ===
+        id
     );
 
 
@@ -2032,28 +2296,15 @@ function editItem(
     return;
 
 
-  $("editingId").value =
+  $("editingId")
+    .value =
     id;
 
 
-  $("url").value =
+  $("title")
+    .value =
+    item.title ||
     "";
-
-
-  $("publicId").value =
-    "";
-
-
-  $("type").value =
-    "";
-
-
-  $("deleteToken").value =
-    "";
-
-
-  $("title").value =
-    item.title || "";
 
 
   ensureSelectValue(
@@ -2068,82 +2319,45 @@ function editItem(
   );
 
 
-  $("description").value =
-    item.description || "";
+  $("description")
+    .value =
+    item.description ||
+    "";
 
 
-  $("featured").checked =
+  $("featured")
+    .checked =
     item.featured === true;
 
 
-  $("published").checked =
+  $("published")
+    .checked =
     item.published === true;
 
 
-  $("preview")
-    .classList
-    .remove("hidden");
+  stagedMedia =
+    getMediaList(
+      item
+    ).map(
+      (media) => ({
+        ...media
+      })
+    );
 
 
-  $("preview")
-    .replaceChildren();
+  renderStagedMedia();
 
 
-  if (
-    item.type ===
-    "video"
-  ) {
-
-    const video =
-      document.createElement(
-        "video"
-      );
-
-
-    video.src =
-      item.url;
-
-
-    video.controls =
-      true;
-
-
-    video.style.width =
-      "100%";
-
-
-    $("preview")
-      .appendChild(video);
-
-  } else {
-
-    const image =
-      document.createElement(
-        "img"
-      );
-
-
-    image.src =
-      item.url;
-
-
-    image.alt =
-      "Preview";
-
-
-    $("preview")
-      .appendChild(image);
-
-  }
-
-
-  $("save").textContent =
+  $("save")
+    .textContent =
     "Save Changes";
 
 
   $("cancel")
     .classList
-    .remove("hidden");
+    .remove(
+      "hidden"
+    );
 
 
   location.hash =
@@ -2181,14 +2395,22 @@ async function loadExperience() {
           ...d.data()
 
         })
+
       )
 
       .sort(
 
         (a, b) =>
 
-          (Number(a.order) || 0) -
-          (Number(b.order) || 0)
+          (Number(
+            a.order
+          ) || 0)
+
+          -
+
+          (Number(
+            b.order
+          ) || 0)
 
       );
 
@@ -2414,38 +2636,58 @@ function openExperienceForm(
 
   $("experienceForm")
     .classList
-    .remove("hidden");
+    .remove(
+      "hidden"
+    );
 
 
-  $("experienceId").value =
-    data?.id || "";
+  $("experienceId")
+    .value =
+    data?.id ||
+    "";
 
 
-  $("experienceCompany").value =
-    data?.company || "";
+  $("experienceCompany")
+    .value =
+    data?.company ||
+    "";
 
 
-  $("experienceRole").value =
-    data?.role || "";
+  $("experienceRole")
+    .value =
+    data?.role ||
+    "";
 
 
-  $("experienceStart").value =
-    data?.startDate || "";
+  $("experienceStart")
+    .value =
+    data?.startDate ||
+    "";
 
 
-  $("experienceEnd").value =
-    data?.endDate || "Present";
+  $("experienceEnd")
+    .value =
+    data?.endDate ||
+    "Present";
 
 
-  $("experienceDescription").value =
-    data?.description || "";
+  $("experienceDescription")
+    .value =
+    data?.description ||
+    "";
 
 
-  $("experienceTags").value =
+  $("experienceTags")
+    .value =
+
     Array.isArray(
       data?.tags
     )
-      ? data.tags.join(", ")
+
+      ? data.tags.join(
+          ", "
+        )
+
       : "";
 
 
@@ -2454,7 +2696,6 @@ function openExperienceForm(
     top:
       $("experience")
         .offsetTop -
-
       20,
 
     behavior:
@@ -2469,18 +2710,22 @@ function closeExperienceForm() {
 
   $("experienceForm")
     .classList
-    .add("hidden");
+    .add(
+      "hidden"
+    );
 
 
   $("experienceForm")
     .reset();
 
 
-  $("experienceId").value =
+  $("experienceId")
+    .value =
     "";
 
 
-  $("experienceEnd").value =
+  $("experienceEnd")
+    .value =
     "Present";
 
 }
@@ -2494,7 +2739,8 @@ function editExperience(
 
     experiences.find(
       (entry) =>
-        entry.id === id
+        entry.id ===
+        id
     )
 
   );
@@ -2571,7 +2817,8 @@ $("experienceForm").addEventListener(
 
     ) {
 
-      $("experienceMsg").textContent =
+      $("experienceMsg")
+        .textContent =
         "Company, role and start date are required.";
 
       return;
@@ -2648,13 +2895,13 @@ $("experienceForm").addEventListener(
 
       closeExperienceForm();
 
-
       await loadEverything();
 
 
     } catch (error) {
 
-      $("experienceMsg").textContent =
+      $("experienceMsg")
+        .textContent =
         error.message ||
         "Could not save experience.";
 
@@ -2699,14 +2946,22 @@ async function loadEducation() {
           ...d.data()
 
         })
+
       )
 
       .sort(
 
         (a, b) =>
 
-          (Number(a.order) || 0) -
-          (Number(b.order) || 0)
+          (Number(
+            a.order
+          ) || 0)
+
+          -
+
+          (Number(
+            b.order
+          ) || 0)
 
       );
 
@@ -2923,31 +3178,45 @@ function openEducationForm(
 
   $("educationForm")
     .classList
-    .remove("hidden");
+    .remove(
+      "hidden"
+    );
 
 
-  $("educationId").value =
-    data?.id || "";
+  $("educationId")
+    .value =
+    data?.id ||
+    "";
 
 
-  $("educationInstitution").value =
-    data?.institution || "";
+  $("educationInstitution")
+    .value =
+    data?.institution ||
+    "";
 
 
-  $("educationDegree").value =
-    data?.degree || "";
+  $("educationDegree")
+    .value =
+    data?.degree ||
+    "";
 
 
-  $("educationSection").value =
-    data?.section || "";
+  $("educationSection")
+    .value =
+    data?.section ||
+    "";
 
 
-  $("educationDate").value =
-    data?.date || "";
+  $("educationDate")
+    .value =
+    data?.date ||
+    "";
 
 
-  $("educationDescription").value =
-    data?.description || "";
+  $("educationDescription")
+    .value =
+    data?.description ||
+    "";
 
 
   window.scrollTo({
@@ -2955,7 +3224,6 @@ function openEducationForm(
     top:
       $("education")
         .offsetTop -
-
       20,
 
     behavior:
@@ -2970,14 +3238,17 @@ function closeEducationForm() {
 
   $("educationForm")
     .classList
-    .add("hidden");
+    .add(
+      "hidden"
+    );
 
 
   $("educationForm")
     .reset();
 
 
-  $("educationId").value =
+  $("educationId")
+    .value =
     "";
 
 }
@@ -2991,7 +3262,8 @@ function editEducation(
 
     education.find(
       (entry) =>
-        entry.id === id
+        entry.id ===
+        id
     )
 
   );
@@ -3053,7 +3325,8 @@ $("educationForm").addEventListener(
 
     ) {
 
-      $("educationMsg").textContent =
+      $("educationMsg")
+        .textContent =
         "Institution and degree are required.";
 
       return;
@@ -3130,13 +3403,13 @@ $("educationForm").addEventListener(
 
       closeEducationForm();
 
-
       await loadEverything();
 
 
     } catch (error) {
 
-      $("educationMsg").textContent =
+      $("educationMsg")
+        .textContent =
         error.message ||
         "Could not save education.";
 
@@ -3181,14 +3454,22 @@ async function loadSkills() {
           ...d.data()
 
         })
+
       )
 
       .sort(
 
         (a, b) =>
 
-          (Number(a.order) || 0) -
-          (Number(b.order) || 0)
+          (Number(
+            a.order
+          ) || 0)
+
+          -
+
+          (Number(
+            b.order
+          ) || 0)
 
       );
 
@@ -3243,7 +3524,8 @@ function renderSkills() {
 
           ? `${skill.name} — ${skill.level}`
 
-          : skill.name || "";
+          : skill.name ||
+            "";
 
 
       const edit =
@@ -3294,9 +3576,13 @@ function renderSkills() {
 
 
       item.append(
+
         text,
+
         edit,
+
         remove
+
       );
 
 
@@ -3329,19 +3615,27 @@ function openSkillForm(
 
   $("skillForm")
     .classList
-    .remove("hidden");
+    .remove(
+      "hidden"
+    );
 
 
-  $("skillId").value =
-    data?.id || "";
+  $("skillId")
+    .value =
+    data?.id ||
+    "";
 
 
-  $("skillName").value =
-    data?.name || "";
+  $("skillName")
+    .value =
+    data?.name ||
+    "";
 
 
-  $("skillLevel").value =
-    data?.level || "";
+  $("skillLevel")
+    .value =
+    data?.level ||
+    "";
 
 
   window.scrollTo({
@@ -3349,7 +3643,6 @@ function openSkillForm(
     top:
       $("skills")
         .offsetTop -
-
       20,
 
     behavior:
@@ -3364,14 +3657,17 @@ function closeSkillForm() {
 
   $("skillForm")
     .classList
-    .add("hidden");
+    .add(
+      "hidden"
+    );
 
 
   $("skillForm")
     .reset();
 
 
-  $("skillId").value =
+  $("skillId")
+    .value =
     "";
 
 }
@@ -3385,7 +3681,8 @@ function editSkill(
 
     skills.find(
       (skill) =>
-        skill.id === id
+        skill.id ===
+        id
     )
 
   );
@@ -3426,7 +3723,8 @@ $("skillForm").addEventListener(
 
     if (!payload.name) {
 
-      $("skillMsg").textContent =
+      $("skillMsg")
+        .textContent =
         "Skill name is required.";
 
       return;
@@ -3503,13 +3801,13 @@ $("skillForm").addEventListener(
 
       closeSkillForm();
 
-
       await loadEverything();
 
 
     } catch (error) {
 
-      $("skillMsg").textContent =
+      $("skillMsg")
+        .textContent =
         error.message ||
         "Could not save skill.";
 
@@ -3549,7 +3847,8 @@ async function loadProfile() {
       !snap.exists()
     ) {
 
-      $("currentProfile").textContent =
+      $("currentProfile")
+        .textContent =
         "No profile photo uploaded yet.";
 
       return;
@@ -3563,7 +3862,8 @@ async function loadProfile() {
 
     if (!data?.url) {
 
-      $("currentProfile").textContent =
+      $("currentProfile")
+        .textContent =
         "No profile photo uploaded yet.";
 
       return;
@@ -3609,82 +3909,117 @@ $("profileBtn").addEventListener(
 
     try {
 
-      $("profileMsg").textContent =
+      $("profileMsg")
+        .textContent =
         "Choose a profile photo...";
 
 
-      const file =
-        await chooseFile(
-          "image"
+      const input =
+        document.createElement(
+          "input"
         );
 
 
-      if (!file)
-        return;
+      input.type =
+        "file";
 
 
-      const info =
-        await uploadDirect(
+      input.accept =
+        "image/jpeg,image/png,image/webp";
 
-          file,
 
-          "image",
+      input.click();
 
-          (percent) => {
 
-            $("profileMsg").textContent =
-              `Uploading profile photo ${percent}%...`;
+      input.addEventListener(
+        "change",
+        async () => {
+
+          const file =
+            input.files?.[0];
+
+
+          if (!file)
+            return;
+
+
+          try {
+
+            const info =
+              await uploadDirect(
+
+                file,
+
+                "image",
+
+                (percent) => {
+
+                  $("profileMsg")
+                    .textContent =
+                    `Uploading profile photo ${percent}%...`;
+
+                }
+
+              );
+
+
+            await setDoc(
+
+              doc(
+                db,
+                "siteSettings",
+                "profile"
+              ),
+
+              {
+
+                url:
+                  info.secure_url,
+
+                publicId:
+                  info.public_id ||
+                  "",
+
+                updatedAt:
+                  Date.now(),
+
+                updatedBy:
+                  user.uid
+
+              }
+
+            );
+
+
+            await loadProfile();
+
+
+            $("profileMsg")
+              .textContent =
+              "Profile photo updated.";
+
+          } catch (error) {
+
+            $("profileMsg")
+              .textContent =
+              error.message;
 
           }
 
-        );
-
-
-      await setDoc(
-
-        doc(
-          db,
-          "siteSettings",
-          "profile"
-        ),
-
+        },
         {
-
-          url:
-            info.secure_url,
-
-          publicId:
-            info.public_id ||
-            "",
-
-          updatedAt:
-            Date.now(),
-
-          updatedBy:
-            user.uid
-
+          once:
+            true
         }
-
       );
 
-
-      await loadProfile();
-
-
-      $("profileMsg").textContent =
-        "Profile photo updated.";
 
     } catch (error) {
 
-      console.error(
-        "PROFILE UPLOAD ERROR:",
-        error
-      );
-
-
-      $("profileMsg").textContent =
+      $("profileMsg")
+        .textContent =
         error.message ||
-        "Could not update profile photo.";
+        "Could not update profile.";
 
     }
 
@@ -3713,70 +4048,85 @@ async function loadContent() {
 
 
     const data =
+
       snap.exists()
+
         ? {
             ...DEFAULT_CONTENT,
             ...snap.data()
           }
+
         : DEFAULT_CONTENT;
 
 
-    $("heroEyebrow").value =
+    $("heroEyebrow")
+      .value =
       data.heroEyebrow ||
       "";
 
 
-    $("heroTitle").value =
+    $("heroTitle")
+      .value =
       data.heroTitle ||
       "";
 
 
-    $("heroLead").value =
+    $("heroLead")
+      .value =
       data.heroLead ||
       "";
 
 
-    $("aboutHeading").value =
+    $("aboutHeading")
+      .value =
       data.aboutHeading ||
       "";
 
 
-    $("aboutIntro").value =
+    $("aboutIntro")
+      .value =
       data.aboutIntro ||
       "";
 
 
-    $("aboutBody").value =
+    $("aboutBody")
+      .value =
       data.aboutBody ||
       "";
 
 
-    $("aboutQuote").value =
+    $("aboutQuote")
+      .value =
       data.aboutQuote ||
       "";
 
 
-    $("contactHeading").value =
+    $("contactHeading")
+      .value =
       data.contactHeading ||
       "";
 
 
-    $("contactEmail").value =
+    $("contactEmail")
+      .value =
       data.contactEmail ||
       "";
 
 
-    $("contactPhone1").value =
+    $("contactPhone1")
+      .value =
       data.contactPhone1 ||
       "";
 
 
-    $("contactPhone2").value =
+    $("contactPhone2")
+      .value =
       data.contactPhone2 ||
       "";
 
 
-    $("contactLocation").value =
+    $("contactLocation")
+      .value =
       data.contactLocation ||
       "";
 
@@ -3896,13 +4246,14 @@ $("contentForm").addEventListener(
       );
 
 
-      $("contentMsg").textContent =
+      $("contentMsg")
+        .textContent =
         "Site content saved successfully.";
-
 
     } catch (error) {
 
-      $("contentMsg").textContent =
+      $("contentMsg")
+        .textContent =
         error.message ||
         "Could not save site content.";
 
@@ -3928,15 +4279,18 @@ function askDelete(
 ) {
 
   deleteTarget = {
+
     type,
+
     id
+
   };
 
 
-  const names = {
+  const labels = {
 
     work:
-      "this work",
+      "this post",
 
     experience:
       "this experience",
@@ -3950,14 +4304,17 @@ function askDelete(
   };
 
 
-  $("confirmText").textContent =
+  $("confirmText")
+    .textContent =
 
-    `Are you sure you want to remove ${names[type]}?`;
+    `Are you sure you want to remove ${labels[type]}?`;
 
 
   $("confirm")
     .classList
-    .add("active");
+    .add(
+      "active"
+    );
 
 }
 
@@ -3972,7 +4329,9 @@ $("cancelDelete").addEventListener(
 
     $("confirm")
       .classList
-      .remove("active");
+      .remove(
+        "active"
+      );
 
   }
 );
@@ -4032,7 +4391,9 @@ $("delete").addEventListener(
 
       $("confirm")
         .classList
-        .remove("active");
+        .remove(
+          "active"
+        );
 
 
       await loadEverything();
@@ -4041,10 +4402,11 @@ $("delete").addEventListener(
     } catch (error) {
 
       alert(
+
         error.message ||
         "Could not remove item."
-      );
 
+      );
 
     } finally {
 
